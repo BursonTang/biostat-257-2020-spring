@@ -13084,13 +13084,40 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">versioninfo</span><span class="p">()</span>
 </pre></div>
 
     </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Julia Version 1.4.0
+Commit b8e9a9ecc6 (2020-03-21 16:36 UTC)
+Platform Info:
+  OS: Windows (x86_64-w64-mingw32)
+  CPU: Intel(R) Core(TM) i7-8750H CPU @ 2.20GHz
+  WORD_SIZE: 64
+  LIBM: libopenlibm
+  LLVM: libLLVM-8.0.1 (ORCJIT, skylake)
+Environment:
+  JULIA = D:\Julia-1.4.0\bin
+</pre>
+</div>
+</div>
+
 </div>
 </div>
 
@@ -13154,7 +13181,7 @@ l &amp; = -\frac{n}{2}\ln(2\pi)-\frac{1}{2}\ln( |Var(Y_i)|) - \frac{1}{2}(Y-\mu)
     <span class="c"># whatever intermediate arrays you may want to pre-allocate</span>
     <span class="n">res</span>        <span class="o">::</span> <span class="kt">Vector</span><span class="p">{</span><span class="n">T</span><span class="p">}</span>
     <span class="n">storage_q</span>  <span class="o">::</span> <span class="kt">Vector</span><span class="p">{</span><span class="n">T</span><span class="p">}</span>
-    <span class="n">storage_q2</span>  <span class="o">::</span> <span class="kt">Matrix</span><span class="p">{</span><span class="n">T</span><span class="p">}</span>
+    <span class="n">storage_q2</span>  <span class="o">::</span> <span class="kt">Vector</span><span class="p">{</span><span class="n">T</span><span class="p">}</span>
     <span class="n">ztz</span>        <span class="o">::</span> <span class="kt">Matrix</span><span class="p">{</span><span class="n">T</span><span class="p">}</span>
     <span class="n">storage_qq</span> <span class="o">::</span> <span class="kt">Matrix</span><span class="p">{</span><span class="n">T</span><span class="p">}</span>
 <span class="k">end</span>
@@ -13164,9 +13191,9 @@ l &amp; = -\frac{n}{2}\ln(2\pi)-\frac{1}{2}\ln( |Var(Y_i)|) - \frac{1}{2}(Y-\mu)
         <span class="n">y</span><span class="o">::</span><span class="kt">Vector</span><span class="p">{</span><span class="n">T</span><span class="p">},</span> 
         <span class="n">X</span><span class="o">::</span><span class="kt">Matrix</span><span class="p">{</span><span class="n">T</span><span class="p">},</span> 
         <span class="n">Z</span><span class="o">::</span><span class="kt">Matrix</span><span class="p">{</span><span class="n">T</span><span class="p">})</span> <span class="n">where</span> <span class="n">T</span> <span class="o">&lt;:</span> <span class="kt">AbstractFloat</span>
-    <span class="n">res</span>        <span class="o">=</span> <span class="n">similar</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="n">res</span>        <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
     <span class="n">storage_q</span>  <span class="o">=</span> <span class="kt">Vector</span><span class="p">{</span><span class="n">T</span><span class="p">}(</span><span class="n">undef</span><span class="p">,</span> <span class="n">size</span><span class="p">(</span><span class="n">Z</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
-    <span class="n">storage_q2</span>  <span class="o">=</span> <span class="n">similar</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>
+    <span class="n">storage_q2</span>  <span class="o">=</span> <span class="kt">Vector</span><span class="p">{</span><span class="n">T</span><span class="p">}(</span><span class="n">undef</span><span class="p">,</span> <span class="n">size</span><span class="p">(</span><span class="n">Z</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
     <span class="n">ztz</span>        <span class="o">=</span> <span class="n">transpose</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span> <span class="o">*</span> <span class="n">Z</span>
     <span class="n">storage_qq</span> <span class="o">=</span> <span class="n">similar</span><span class="p">(</span><span class="n">ztz</span><span class="p">)</span>
 <span class="c">#     LmmObs(y, X, Z, res, storage_q, ztz, storage_qq)</span>
@@ -13223,16 +13250,22 @@ l &amp; = -\frac{n}{2}\ln(2\pi)-\frac{1}{2}\ln( |Var(Y_i)|) - \frac{1}{2}(Y-\mu)
     <span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">q</span> <span class="o">=</span> <span class="n">size</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">size</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">size</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>    
 
     <span class="c"># TODO: compute and return the log-likelihood</span>
+    
     <span class="c"># Calculate residual</span>
-    <span class="n">mul!</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">res</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">β</span><span class="p">)</span>
-    <span class="n">obs</span><span class="o">.</span><span class="n">res</span> <span class="o">.=</span> <span class="n">obs</span><span class="o">.</span><span class="n">y</span> <span class="o">.-</span> <span class="n">obs</span><span class="o">.</span><span class="n">res</span>
+<span class="c">#     mul!(obs.y, obs.X, β,1, -1)  # bottleneck</span>
+<span class="c">#     mul!(copy!(obs.res, obs.y), obs.X, β, T(1), T(-1))</span>
+<span class="c">#     BLAS.gemv!(&#39;N&#39;, T(1), obs.X, β, T(-1), copy!(obs.res, obs.y))</span>
+    <span class="n">BLAS</span><span class="o">.</span><span class="n">gemv!</span><span class="p">(</span><span class="sc">&#39;N&#39;</span><span class="p">,</span> <span class="n">T</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">obs</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">β</span><span class="p">,</span> <span class="n">T</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">obs</span><span class="o">.</span><span class="n">res</span><span class="p">)</span>
+<span class="c">#     mul!(obs.res, obs.X, β)  # bottleneck</span>
+<span class="c">#     obs.res .= obs.y .- obs.res</span>
+    
+    <span class="c">#Z&#39;A =&gt; L&#39;Z&#39;A  = (ZL)&#39;A</span>
+    <span class="n">mul!</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">storage_q2</span><span class="p">,</span> <span class="n">transpose</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">Z</span><span class="p">),</span> <span class="n">obs</span><span class="o">.</span><span class="n">res</span><span class="p">)</span>
+    <span class="n">mul!</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">storage_q</span><span class="p">,</span> <span class="n">transpose</span><span class="p">(</span><span class="n">L</span><span class="p">),</span> <span class="n">obs</span><span class="o">.</span><span class="n">storage_q2</span><span class="p">)</span>
     
     <span class="c">#ZL =&gt; (ZL)&#39;A</span>
-    <span class="n">mul!</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">storage_q2</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="kt">LowerTriangular</span><span class="p">(</span><span class="n">L</span><span class="p">))</span>
-    <span class="n">mul!</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">storage_q</span><span class="p">,</span><span class="n">transpose</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">storage_q2</span><span class="p">),</span> <span class="n">obs</span><span class="o">.</span><span class="n">res</span><span class="p">)</span>
-    <span class="c"># rmul!(obs.Z, LowerTriangular(L))</span>
-    <span class="c"># mul!(obs.storage_q,transpose(obs.Z), obs.res)</span>
-    
+    <span class="c"># mul!(obs.storage_q2, obs.Z, LowerTriangular(L))</span>
+    <span class="c"># mul!(obs.storage_q,transpose(obs.storage_q2), obs.res)</span>
     
     <span class="c"># calculate ZL(ZL)&#39;</span>
     <span class="n">mul!</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">storage_qq</span><span class="p">,</span> <span class="n">transpose</span><span class="p">(</span><span class="n">L</span><span class="p">),</span> <span class="n">obs</span><span class="o">.</span><span class="n">ztz</span><span class="p">)</span>
@@ -13334,70 +13367,6 @@ l &amp; = -\frac{n}{2}\ln(2\pi)-\frac{1}{2}\ln( |Var(Y_i)|) - \frac{1}{2}(Y-\mu)
 </div>
 
 </div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[103]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="n">mul!</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">res</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">β</span><span class="p">)</span>
-<span class="n">obs</span><span class="o">.</span><span class="n">res</span> <span class="o">.=</span> <span class="n">obs</span><span class="o">.</span><span class="n">y</span> <span class="o">.-</span><span class="n">obs</span><span class="o">.</span><span class="n">res</span>
-
-<span class="c"># A&#39;Z =&gt; A&#39;ZL</span>
-<span class="c"># mul!(obs.storage_q, transpose(obs.res), obs.Z)</span>
-<span class="c"># rmul!(obs.storage_q, LowerTriangular(L))</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[103]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>2000-element Array{Float64,1}:
-  0.10242625124792681
-  1.301428169875126
- -0.7132050880088938
-  0.3480728641048403
- -2.377558161127805
-  0.8031853256662527
- -1.8887487107102672
- -1.297865832250453
- -4.936161394750432
- -3.0440059236075854
- -4.0740357446476
- -3.3035397561117517
- -2.612257299200771
-  ⋮
- -3.7484971795038775
- -0.9519883833058203
- -0.561334973606056
- -4.906656990103004
- -2.6052788409024403
- -4.377310857064913
- -3.285980654955158
- -0.5862710201668986
-  0.6304894451767753
- -1.2660665295473756
- -1.9199388500085135
- -2.747043736514613</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -13408,7 +13377,7 @@ l &amp; = -\frac{n}{2}\ln(2\pi)-\frac{1}{2}\ln( |Var(Y_i)|) - \frac{1}{2}(Y-\mu)
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">μ</span>  <span class="o">=</span> <span class="n">X</span> <span class="o">*</span> <span class="n">β</span>
@@ -13429,7 +13398,7 @@ l &amp; = -\frac{n}{2}\ln(2\pi)-\frac{1}{2}\ln( |Var(Y_i)|) - \frac{1}{2}(Y-\mu)
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[15]:</div>
+    <div class="prompt output_prompt">Out[4]:</div>
 
 
 
@@ -13454,7 +13423,7 @@ l &amp; = -\frac{n}{2}\ln(2\pi)-\frac{1}{2}\ln( |Var(Y_i)|) - \frac{1}{2}(Y-\mu)
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">L</span> <span class="o">=</span> <span class="kt">Matrix</span><span class="p">(</span><span class="n">cholesky</span><span class="p">(</span><span class="n">Σ</span><span class="p">)</span><span class="o">.</span><span class="n">L</span><span class="p">)</span>
@@ -13471,13 +13440,13 @@ l &amp; = -\frac{n}{2}\ln(2\pi)-\frac{1}{2}\ln( |Var(Y_i)|) - \frac{1}{2}(Y-\mu)
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[4]:</div>
+    <div class="prompt output_prompt">Out[5]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>-3247.4568580638274</pre>
+<pre>-3247.4568580638293</pre>
 </div>
 
 </div>
@@ -13496,7 +13465,7 @@ l &amp; = -\frac{n}{2}\ln(2\pi)-\frac{1}{2}\ln( |Var(Y_i)|) - \frac{1}{2}(Y-\mu)
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[44]:</div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="nd">@assert</span> <span class="n">logl!</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">β</span><span class="p">,</span> <span class="kt">Matrix</span><span class="p">(</span><span class="n">cholesky</span><span class="p">(</span><span class="n">Σ</span><span class="p">)</span><span class="o">.</span><span class="n">L</span><span class="p">),</span> <span class="n">σ²</span><span class="p">)</span> <span class="n">≈</span> <span class="n">logpdf</span><span class="p">(</span><span class="n">mvn</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
@@ -13517,7 +13486,7 @@ l &amp; = -\frac{n}{2}\ln(2\pi)-\frac{1}{2}\ln( |Var(Y_i)|) - \frac{1}{2}(Y-\mu)
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[40]:</div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># benchmark the `logpdf` function in Distribution.jl</span>
@@ -13534,7 +13503,7 @@ l &amp; = -\frac{n}{2}\ln(2\pi)-\frac{1}{2}\ln( |Var(Y_i)|) - \frac{1}{2}(Y-\mu)
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[40]:</div>
+    <div class="prompt output_prompt">Out[6]:</div>
 
 
 
@@ -13544,12 +13513,12 @@ l &amp; = -\frac{n}{2}\ln(2\pi)-\frac{1}{2}\ln( |Var(Y_i)|) - \frac{1}{2}(Y-\mu)
   memory estimate:  30.55 MiB
   allocs estimate:  5
   --------------
-  minimum time:     15.957 ms (0.00% GC)
-  median time:      16.553 ms (0.00% GC)
-  mean time:        18.963 ms (13.40% GC)
-  maximum time:     27.405 ms (31.76% GC)
+  minimum time:     15.605 ms (0.00% GC)
+  median time:      17.170 ms (0.00% GC)
+  mean time:        19.647 ms (13.89% GC)
+  maximum time:     34.236 ms (28.03% GC)
   --------------
-  samples:          264
+  samples:          255
   evals/sample:     1</pre>
 </div>
 
@@ -13561,11 +13530,93 @@ l &amp; = -\frac{n}{2}\ln(2\pi)-\frac{1}{2}\ln( |Var(Y_i)|) - \frac{1}{2}(Y-\mu)
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">Profile</span>
+<span class="n">Profile</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+<span class="n">Profile</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+<span class="nd">@profile</span> <span class="k">for</span> <span class="n">i</span> <span class="kp">in</span> <span class="mi">1</span><span class="o">:</span><span class="mi">10000</span><span class="p">;</span> <span class="n">logl!</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">β</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">σ²</span><span class="p">);</span> <span class="k">end</span>
+<span class="n">Profile</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">format</span><span class="o">=:</span><span class="n">flat</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre> Count  Overhead File                    Line Function
+ =====  ======== ====                    ==== ========
+   212         0 In[10]                     4 macro expansion
+   213         0 In[10]                     4 top-level scope
+   178         0 In[2]                     14 logl!(::LmmObs{Float64}, ::Arra...
+    10         0 In[2]                     19 logl!(::LmmObs{Float64}, ::Arra...
+     3         0 In[2]                     20 logl!(::LmmObs{Float64}, ::Arra...
+     3         0 In[2]                     28 logl!(::LmmObs{Float64}, ::Arra...
+     2         0 In[2]                     36 logl!(::LmmObs{Float64}, ::Arra...
+    16         0 In[2]                     44 logl!(::LmmObs{Float64}, ::Arra...
+     1         0 @Base\array.jl           313 copyto!(::Array{Float64,1}, ::I...
+     1         0 @Base\array.jl           318 copyto!(::Array{Float64,1}, ::I...
+     3         1 @Base\array.jl           330 copyto!
+     3         0 @Base\array.jl           361 similar
+     1         1 @Base\array.jl           271 unsafe_copyto!
+     3         3 @Base\boot.jl            405 Array
+     3         0 @Base\boot.jl            414 Array
+   213         0 @Base\boot.jl            331 eval
+   213         0 @Base\essentials.jl      712 #invokelatest#1
+   213         0 @Base\essentials.jl      711 invokelatest
+     2         2 @Base\promotion.jl       398 ==
+     1         0 @Base\range.jl           597 iterate
+   213         0 @Base\task.jl            358 (::IJulia.var&#34;#15#18&#34;)()
+   213         0 ...ia\src\eventloop.jl     8 eventloop(::ZMQ.Socket)
+   213         0 ...\execute_request.jl    67 execute_request(::ZMQ.Socket, :...
+   213         0 ...\SoftGlobalScope.jl   218 softscope_include_string(::Modu...
+     4         4 ...Algebra\src\blas.jl   286 dot
+     1         1 ...Algebra\src\blas.jl   330 dot(::Array{Float64,1}, ::Array...
+     4         0 ...Algebra\src\blas.jl   335 dot(::Array{Float64,1}, ::Array...
+   188       188 ...Algebra\src\blas.jl   587 gemv!(::Char, ::Float64, ::Arra...
+     3         3 ...Algebra\src\blas.jl  1670 trmm!(::Char, ::Char, ::Char, :...
+     2         1 ...bra\src\cholesky.jl   225 cholesky!(::Symmetric{Float64,A...
+     1         0 ...bra\src\cholesky.jl   144 _chol!
+     2         0 ...bra\src\cholesky.jl   225 cholesky!
+     5         0 ...bra\src\cholesky.jl   471 ldiv!
+     3         0 ...rc\factorization.jl    99 \
+     3         0 ...rc\factorization.jl   100 \
+     5         0 ...rc\factorization.jl   101 \
+     1         1 ...gebra\src\lapack.jl  3077 potrf!
+     5         5 ...gebra\src\lapack.jl  3127 potrs!(::Char, ::Array{Float64,...
+     5         0 ...gebra\src\matmul.jl     9 dot
+     3         3 ...gebra\src\matmul.jl   454 gemv!(::Array{Float64,1}, ::Cha...
+    10         0 ...gebra\src\matmul.jl   470 gemv!(::Array{Float64,1}, ::Cha...
+    13         0 ...gebra\src\matmul.jl    97 mul!
+    13         0 ...gebra\src\matmul.jl   208 mul!
+     3         0 ...a\src\triangular.jl   732 rmul!
+   213         0 ...file\src\Profile.jl    28 macro expansion
+Total snapshots: 217
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># benchmark your implementation</span>
-
+<span class="n">L</span> <span class="o">=</span> <span class="kt">Matrix</span><span class="p">(</span><span class="n">cholesky</span><span class="p">(</span><span class="n">Σ</span><span class="p">)</span><span class="o">.</span><span class="n">L</span><span class="p">)</span>
 <span class="n">bm2</span> <span class="o">=</span> <span class="nd">@benchmark</span> <span class="n">logl!</span><span class="p">(</span><span class="o">$</span><span class="n">obs</span><span class="p">,</span> <span class="o">$</span><span class="n">β</span><span class="p">,</span> <span class="o">$</span><span class="n">L</span><span class="p">,</span> <span class="o">$</span><span class="n">σ²</span><span class="p">)</span>
 </pre></div>
 
@@ -13579,20 +13630,20 @@ l &amp; = -\frac{n}{2}\ln(2\pi)-\frac{1}{2}\ln( |Var(Y_i)|) - \frac{1}{2}(Y-\mu)
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[5]:</div>
+    <div class="prompt output_prompt">Out[7]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
 <pre>BenchmarkTools.Trial: 
-  memory estimate:  576 bytes
-  allocs estimate:  12
+  memory estimate:  224 bytes
+  allocs estimate:  5
   --------------
-  minimum time:     90.500 μs (0.00% GC)
-  median time:      99.900 μs (0.00% GC)
-  mean time:        101.224 μs (0.00% GC)
-  maximum time:     1.144 ms (0.00% GC)
+  minimum time:     54.500 μs (0.00% GC)
+  median time:      62.300 μs (0.00% GC)
+  mean time:        62.910 μs (0.00% GC)
+  maximum time:     518.800 μs (0.00% GC)
   --------------
   samples:          10000
   evals/sample:     1</pre>
@@ -13618,7 +13669,7 @@ where $x$ is the speedup of your program against the standard method.</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[46]:</div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># this is the points you&#39;ll get</span>
@@ -13635,13 +13686,46 @@ where $x$ is the speedup of your program against the standard method.</p>
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[46]:</div>
+    <div class="prompt output_prompt">Out[8]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>5.0364400101419875</pre>
+<pre>8.267865168539327</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="n">median</span><span class="p">(</span><span class="n">bm1</span><span class="p">)</span><span class="o">.</span><span class="n">time</span> <span class="o">/</span> <span class="n">median</span><span class="p">(</span><span class="n">bm2</span><span class="p">)</span><span class="o">.</span><span class="n">time</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[9]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>275.59550561797755</pre>
 </div>
 
 </div>
@@ -13668,7 +13752,7 @@ where $x$ is the speedup of your program against the standard method.</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">clamp</span><span class="p">(</span><span class="mi">30</span> <span class="o">-</span> <span class="n">median</span><span class="p">(</span><span class="n">bm2</span><span class="p">)</span><span class="o">.</span><span class="n">memory</span> <span class="o">/</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">30</span><span class="p">)</span>
@@ -13684,7 +13768,7 @@ where $x$ is the speedup of your program against the standard method.</p>
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[15]:</div>
+    <div class="prompt output_prompt">Out[11]:</div>
 
 
 
