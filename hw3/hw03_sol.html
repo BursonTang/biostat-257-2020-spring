@@ -2,7 +2,7 @@
 <html>
 <head><meta charset="utf-8" />
 
-<title>hw03</title>
+<title>hw03_sol</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
@@ -13070,28 +13070,6 @@ div#notebook {
     });
     </script>
     <!-- End of mathjax configuration --></head>
-
- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.css">
-
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
-
-<link rel="stylesheet" type="text/css" href="https://rawgit.com/ipython-contrib/jupyter_contrib_nbextensions/master/src/jupyter_contrib_nbextensions/nbextensions/toc2/main.css">
-
-<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
-<script src="https://rawgit.com/ipython-contrib/jupyter_contrib_nbextensions/master/src/jupyter_contrib_nbextensions/nbextensions/toc2/toc2.js"></script>
-
-<script>
-$( document ).ready(function(){
-
-            var cfg = {"colors": {"hover_highlight": "#DAA520", "running_highlight": "#FF0000", "selected_highlight": "#FFD700"}, "moveMenuLeft": true, "nav_menu": {"height": "87px", "width": "252px"}, "navigate_menu": true, "number_sections": false, "sideBar": true, "skip_h1_title": true, "threshold": 4, "toc_cell": false, "toc_section_display": "block", "toc_window_display": true, "widenNotebook": false};
-
-            // fire the main function with these parameters
-            require(['nbextensions/toc2/toc2'], function (toc2) {
-                toc2.table_of_contents(cfg);
-            });
-    });
-</script>
 <body>
   <div tabindex="-1" id="notebook" class="border-box-sizing">
     <div class="container" id="notebook-container">
@@ -13107,13 +13085,40 @@ $( document ).ready(function(){
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">versioninfo</span><span class="p">()</span>
 </pre></div>
 
     </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Julia Version 1.4.1
+Commit 381693d3df* (2020-04-14 17:20 UTC)
+Platform Info:
+  OS: Windows (x86_64-w64-mingw32)
+  CPU: Intel(R) Core(TM) i7-8750H CPU @ 2.20GHz
+  WORD_SIZE: 64
+  LIBM: libopenlibm
+  LLVM: libLLVM-8.0.1 (ORCJIT, skylake)
+Environment:
+  JULIA = D:\Julia-1.4.0\bin
+</pre>
+</div>
+</div>
+
 </div>
 </div>
 
@@ -13139,7 +13144,17 @@ $r_i = \sum_j a_{ij}$ is the out-degree of page $i$. That is $r_i$ is the number
 </li>
 <li>From a page $i$ with $r_i=0$ (a dangling page), (s)he randomly chooses one page from the set of all $n$ pages (uniformly) and proceeds to that page  </li>
 </ul>
-<p>The process defines a Markov chain on the space of $n$ pages. Write the transition matrix $\mathbf{P}$ of the Markov chain as a sparse matrix plus rank 1 matrix.</p>
+<p>The process defines a Markov chain on the space of $n$ pages. Write the transition matrix $\mathbf{P}$ of the Markov chain as a sparse matrix plus rank 1 matrix.\
+<strong>Solution:</strong> The elements of the transition matrix is the probability (s)he goes to the next page j, so we know:
+$$
+\begin{eqnarray*}
+    P_{ij}= \begin{cases}
+    \frac{p}{r_i} + \frac{1-p}{n} &amp; \text{if $r_i&gt;0$} \\
+    \frac{1}{n} &amp; \text{$r_i=0$}
+    \end{cases}.
+\end{eqnarray*}
+$$
+And we can decompose the transition Matrix $\mathbf{P}$ as $\mathbf{P = DA + Z1_n'}$ where D is a $\mathbf{n\times n}$ diagonal matrix with diagonal element $\mathbf{(i,i)}$ being $\mathbf{\frac{p}{r_i}}$ if $\mathbf{r_i&gt;0}$ and $\mathbf{0}$ if $\mathbf{r_i=0}$. $\mathbf{Z}$ is a $\mathbf{n\times 1}$ vector with i-th element $\mathbf{\frac{1-p}{n}}$ if $\mathbf{r_i&gt;0}$ and $\mathbf{\frac{1}{n}}$ if $\mathbf{r_i=0}$.</p>
 
 </div>
 </div>
@@ -13148,7 +13163,10 @@ $r_i = \sum_j a_{ij}$ is the out-degree of page $i$. That is $r_i$ is the number
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Q2.-Relate-to-numerical-linear-algebra">Q2. Relate to numerical linear algebra<a class="anchor-link" href="#Q2.-Relate-to-numerical-linear-algebra">&#182;</a></h2><p>According to standard Markov chain theory, the (random) position of the surfer converges to the stationary distribution $\mathbf{x} = (x_1,\ldots,x_n)^T$ of the Markov chain. $x_i$ has the natural interpretation of the proportion of times the surfer visits page $i$ in the long run. Therefore $\mathbf{x}$ serves as page ranks: a higher $x_i$ means page $i$ is more visited. It is well-known that $\mathbf{x}$ is the left eigenvector corresponding to the top eigenvalue 1 of the transition matrix $\mathbf{P}$. That is $\mathbf{P}^T \mathbf{x} = \mathbf{x}$. Therefore $\mathbf{x}$ can be solved as an <strong>eigen-problem</strong>. It can also be cast as <strong>solving a linear system</strong>. Since the row sums of $\mathbf{P}$ are 1, $\mathbf{P}$ is rank deficient. We can replace the first equation by the $\sum_{i=1}^n x_i = 1$.</p>
-<p>Hint: For iterative solvers, we don't need to replace the 1st equation. We can use the matrix $\mathbf{I} - \mathbf{P}^T$ directly if we start with a vector with all positive entries.</p>
+<p>Hint: For iterative solvers, we don't need to replace the 1st equation. We can use the matrix $\mathbf{I} - \mathbf{P}^T$ directly if we start with a vector with all positive entries.
+<strong>Solution:</strong> We can cast the function as a linear system problem by rearrangement:
+$$\mathbf{P^TX} = \mathbf{X}$$
+$$\mathbf{(I-P^T)X} = 0$$</p>
 
 </div>
 </div>
@@ -13163,7 +13181,7 @@ $r_i = \sum_j a_{ij}$ is the out-degree of page $i$. That is $r_i$ is the number
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">MatrixDepot</span>
@@ -13177,10 +13195,101 @@ $r_i = \sum_j a_{ij}$ is the out-degree of page $i$. That is $r_i$ is the number
 </div>
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>include group.jl for user defined matrix generators
+verify download of index files...
+used remote site is https://sparse.tamu.edu/?per_page=All
+populating internal database...
+downloading: https://sparse.tamu.edu/MM/SNAP/web-Google.tar.gz
+web-Google/web-Google.mtx
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[3]:</div>
+
+
+
+<div class="output_markdown rendered_html output_subarea output_execute_result">
+<h1 id="SNAP/web-Google">SNAP/web-Google<a class="anchor-link" href="#SNAP/web-Google">&#182;</a></h1><h6 id="MatrixMarket-matrix-coordinate-pattern-general">MatrixMarket matrix coordinate pattern general<a class="anchor-link" href="#MatrixMarket-matrix-coordinate-pattern-general">&#182;</a></h6><hr>
+<ul>
+<li>UF Sparse Matrix Collection, Tim Davis</li>
+<li><a href="http://www.cise.ufl.edu/research/sparse/matrices/SNAP/web-Google">http://www.cise.ufl.edu/research/sparse/matrices/SNAP/web-Google</a></li>
+<li>name: SNAP/web-Google</li>
+<li>[Web graph from Google]</li>
+<li>id: 2301</li>
+<li>date: 2002</li>
+<li>author: Google</li>
+<li>ed: J. Leskovec</li>
+<li>fields: name title A id date author ed kind notes</li>
+<li>kind: directed graph</li>
+</ul>
+<hr>
+<ul>
+<li>notes:</li>
+<li>Networks from SNAP (Stanford Network Analysis Platform) Network Data Sets,</li>
+<li>Jure Leskovec <a href="http://snap.stanford.edu/data/index.html">http://snap.stanford.edu/data/index.html</a></li>
+<li>email jure at cs.stanford.edu</li>
+<li></li>
+<li>Google web graph</li>
+<li></li>
+<li>Dataset information</li>
+<li></li>
+<li>Nodes represent web pages and directed edges represent hyperlinks between them.</li>
+<li>The data was released in 2002 by Google as a part of Google Programming</li>
+<li>Contest.</li>
+<li></li>
+<li>Dataset statistics</li>
+<li>Nodes   875713</li>
+<li>Edges   5105039</li>
+<li>Nodes in largest WCC    855802 (0.977)</li>
+<li>Edges in largest WCC    5066842 (0.993)</li>
+<li>Nodes in largest SCC    434818 (0.497)</li>
+<li>Edges in largest SCC    3419124 (0.670)</li>
+<li>Average clustering coefficient  0.6047</li>
+<li>Number of triangles     13391903</li>
+<li>Fraction of closed triangles    0.05523</li>
+<li>Diameter (longest shortest path)    22</li>
+<li>90-percentile effective diameter    8.1</li>
+<li></li>
+<li>Source (citation)</li>
+<li></li>
+<li>J. Leskovec, K. Lang, A. Dasgupta, M. Mahoney. Community Structure in Large</li>
+<li>Networks: Natural Cluster Sizes and the Absence of Large Well-Defined Clusters.</li>
+<li>arXiv.org:0810.1355, 2008.</li>
+<li></li>
+<li>Google programming contest, 2002</li>
+<li><a href="http://www.google.com/programming-contest/">http://www.google.com/programming-contest/</a></li>
+<li></li>
+<li>Files</li>
+<li>File    Description</li>
+<li>web-Google.txt.gz   Webgraph from the Google programming contest, 2002</li>
+</ul>
+<hr>
+<p>916428 916428 5105039</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># connectivity matrix</span>
@@ -13191,6 +13300,52 @@ $r_i = \sum_j a_{ij}$ is the out-degree of page $i$. That is $r_i$ is the number
 </div>
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[4]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>916428×916428 SparseArrays.SparseMatrixCSC{Bool,Int64} with 5105039 stored entries:
+  [11343 ,      1]  =  1
+  [11928 ,      1]  =  1
+  [15902 ,      1]  =  1
+  [29547 ,      1]  =  1
+  [30282 ,      1]  =  1
+  [31301 ,      1]  =  1
+  [38717 ,      1]  =  1
+  [43930 ,      1]  =  1
+  [46275 ,      1]  =  1
+  [48193 ,      1]  =  1
+  [50823 ,      1]  =  1
+  [56911 ,      1]  =  1
+  ⋮
+  [608625, 916427]  =  1
+  [618730, 916427]  =  1
+  [622998, 916427]  =  1
+  [673046, 916427]  =  1
+  [716616, 916427]  =  1
+  [720325, 916427]  =  1
+  [772226, 916427]  =  1
+  [785097, 916427]  =  1
+  [788476, 916427]  =  1
+  [822938, 916427]  =  1
+  [833616, 916427]  =  1
+  [417498, 916428]  =  1
+  [843845, 916428]  =  1</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
@@ -13198,15 +13353,410 @@ $r_i = \sum_j a_{ij}$ is the out-degree of page $i$. That is $r_i$ is the number
 <p>Compute summary statistics:</p>
 <ul>
 <li>How much memory does <code>A</code> take? If converted to a <code>Matrix{Float64}</code> (don't do it!), how much memory will it take?  </li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="nd">@show</span> <span class="n">Base</span><span class="o">.</span><span class="n">summarysize</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="nd">@show</span> <span class="n">typeof</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Base.summarysize(A) = 53276943
+typeof(A[1, 1]) = Bool
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[3]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Bool</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Solutions:</strong> Currently it takes 53276943 bytes (around 53MB), and if converted the type from Boolean (1bytes) to Float 64(8bytes), the memory size will be increased by 8 times.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="nd">@show</span> <span class="n">sum</span><span class="p">(</span><span class="n">sum</span><span class="p">(</span><span class="n">A</span><span class="p">))</span>
+<span class="nd">@show</span> <span class="n">count</span><span class="p">(</span><span class="n">i</span><span class="o">-&gt;</span><span class="p">(</span><span class="n">i</span><span class="o">==</span><span class="mi">0</span><span class="p">),</span> <span class="n">sum</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">dims</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>sum(sum(A)) = 5105039
+count((i-&gt;begin
+            #= In[5]:2 =#
+            i == 0
+        end), sum(A, dims = 2)) = 176974
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[5]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>176974</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
 <li>number of web pages</li>
 <li>number of edges (web links). </li>
 <li>number of dangling nodes (pages with no out links)</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Solutions:</strong>  According to the matrix size and stored entries number, we know there are <strong>916428</strong> web pages, and <strong>5105039</strong> edges, and <strong>176974</strong> dangling nodes</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
 <li>histogram of in-degrees  </li>
 <li>list the top 20 pages with the largest in-degrees?  </li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[46]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">UnicodePlots</span>
+<span class="n">inD</span> <span class="o">=</span> <span class="n">vec</span><span class="p">(</span><span class="n">sum</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">dims</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+<span class="nd">@show</span> <span class="n">histogram</span><span class="p">(</span><span class="n">inD</span><span class="p">,</span><span class="n">nbins</span> <span class="o">=</span> <span class="mi">25</span> <span class="p">,</span><span class="n">xscale</span> <span class="o">=</span> <span class="n">log10</span><span class="p">)</span>
+<span class="n">rankInD</span> <span class="o">=</span> <span class="n">sortperm</span><span class="p">(</span><span class="n">inD</span><span class="p">)</span>
+<span class="nd">@show</span> <span class="n">findall</span><span class="p">(</span><span class="n">x</span><span class="o">-&gt;</span><span class="n">x</span><span class="o">&lt;=</span><span class="mi">20</span><span class="p">,</span> <span class="n">rankInD</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>histogram(inD, nbins = 25, xscale = log10) =                     ┌                                        ┐ 
+   [   0.0,  500.0) ┤▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 916114   
+   [ 500.0, 1000.0) ┤▇▇▇▇▇▇▇▇▇▇▇▇ 180                          
+   [1000.0, 1500.0) ┤▇▇▇▇▇▇▇▇ 32                               
+   [1500.0, 2000.0) ┤▇▇▇▇▇▇▇ 20                                
+   [2000.0, 2500.0) ┤▇▇▇▇▇▇ 16                                 
+   [2500.0, 3000.0) ┤▇▇▇▇▇▇▇ 20                                
+   [3000.0, 3500.0) ┤▇▇▇▇▇▇▇ 18                                
+   [3500.0, 4000.0) ┤▇▇▇▇▇ 10                                  
+   [4000.0, 4500.0) ┤▇▇▇▇▇ 9                                   
+   [4500.0, 5000.0) ┤▇▇▇ 4                                     
+   [5000.0, 5500.0) ┤▇▇▇ 4                                     
+   [5500.0, 6000.0) ┤ 0                                        
+   [6000.0, 6500.0) ┤ 1                                        
+                    └                                        ┘ 
+                                Frequency [log10]
+findall((x-&gt;begin
+            #= In[46]:5 =#
+            x &lt;= 20
+        end), rankInD) = [1, 2, 3, 201884, 201885, 201886, 201887, 201888, 201889, 201890, 488779, 603321, 603322, 698817, 726686, 830133, 844453, 844454, 901699, 915320]
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[46]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>20-element Array{Int64,1}:
+      1
+      2
+      3
+ 201884
+ 201885
+ 201886
+ 201887
+ 201888
+ 201889
+ 201890
+ 488779
+ 603321
+ 603322
+ 698817
+ 726686
+ 830133
+ 844453
+ 844454
+ 901699
+ 915320</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
 <li>histogram of out-degrees</li>
 <li>which the top 20 pages with the largest out-degrees?</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[47]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="n">outD</span> <span class="o">=</span> <span class="n">vec</span><span class="p">(</span><span class="n">sum</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">dims</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+<span class="nd">@show</span> <span class="n">histogram</span><span class="p">(</span><span class="n">outD</span><span class="p">,</span><span class="n">nbins</span> <span class="o">=</span> <span class="mi">25</span> <span class="p">,</span><span class="n">xscale</span> <span class="o">=</span> <span class="n">log10</span><span class="p">)</span>
+<span class="n">rankOutD</span> <span class="o">=</span> <span class="n">sortperm</span><span class="p">(</span><span class="n">outD</span><span class="p">)</span>
+<span class="nd">@show</span> <span class="n">findall</span><span class="p">(</span><span class="n">x</span><span class="o">-&gt;</span><span class="n">x</span><span class="o">&lt;=</span><span class="mi">20</span><span class="p">,</span> <span class="n">rankOutD</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>histogram(outD, nbins = 25, xscale = log10) =                   ┌                                        ┐ 
+   [  0.0,  20.0) ┤▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 891798   
+   [ 20.0,  40.0) ┤▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 22628             
+   [ 40.0,  60.0) ┤▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 1329                    
+   [ 60.0,  80.0) ┤▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 371                        
+   [ 80.0, 100.0) ┤▇▇▇▇▇▇▇▇▇▇▇ 124                           
+   [100.0, 120.0) ┤▇▇▇▇▇▇▇▇▇▇ 86                             
+   [120.0, 140.0) ┤▇▇▇▇▇▇▇▇ 29                               
+   [140.0, 160.0) ┤▇▇▇▇▇▇ 15                                 
+   [160.0, 180.0) ┤▇▇▇▇▇▇ 15                                 
+   [180.0, 200.0) ┤▇▇▇▇▇ 8                                   
+   [200.0, 220.0) ┤▇▇▇▇▇ 7                                   
+   [220.0, 240.0) ┤▇▇▇ 3                                     
+   [240.0, 260.0) ┤▇▇▇▇▇ 8                                   
+   [260.0, 280.0) ┤▇▇▇ 3                                     
+   [280.0, 300.0) ┤ 0                                        
+   [300.0, 320.0) ┤ 0                                        
+   [320.0, 340.0) ┤ 1                                        
+   [340.0, 360.0) ┤ 0                                        
+   [360.0, 380.0) ┤▇▇ 2                                      
+   [380.0, 400.0) ┤ 0                                        
+   [400.0, 420.0) ┤ 0                                        
+   [420.0, 440.0) ┤ 0                                        
+   [440.0, 460.0) ┤ 1                                        
+                  └                                        ┘ 
+                              Frequency [log10]
+findall((x-&gt;begin
+            #= In[47]:4 =#
+            x &lt;= 20
+        end), rankOutD) = [1, 2, 176975, 176976, 304912, 400165, 400166, 466141, 466142, 607465, 607466, 607467, 715809, 744905, 744906, 744907, 844414, 857484, 869262, 891799]
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[47]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>20-element Array{Int64,1}:
+      1
+      2
+ 176975
+ 176976
+ 304912
+ 400165
+ 400166
+ 466141
+ 466142
+ 607465
+ 607466
+ 607467
+ 715809
+ 744905
+ 744906
+ 744907
+ 844414
+ 857484
+ 869262
+ 891799</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
 <li>visualize the sparsity pattern of $\mathbf{A}$ or a submatrix of $\mathbf{A}$ say <code>A[1:10000, 1:10000]</code>. </li>
 </ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[60]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="n">spy</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="o">:</span><span class="mi">10000</span><span class="p">,</span> <span class="mi">1</span><span class="o">:</span><span class="mi">10000</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[60]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre><span class="ansi-bold">                      Sparsity Pattern</span>
+<span class="ansi-black-intense-fg">         ┌──────────────────────────────────────────┐</span>    
+       <span class="ansi-black-intense-fg">1</span><span class="ansi-black-intense-fg"> │</span>⠀⠀⠀⠀⠀⠀⠀<span class="ansi-red-fg">⠂</span>⠀⠀⠀⠀<span class="ansi-red-fg">⢀</span><span class="ansi-red-fg">⢂</span><span class="ansi-red-fg">⡂</span><span class="ansi-red-fg">⠐</span>⠀⠀⠀<span class="ansi-red-fg">⠠</span>⠀⠀⠀<span class="ansi-red-fg">⠔</span><span class="ansi-red-fg">⠄</span>⠀<span class="ansi-red-fg">⠈</span><span class="ansi-red-fg">⢀</span>⠀⠀<span class="ansi-red-fg">⠉</span>⠀⠀<span class="ansi-red-fg">⠁</span>⠀⠀<span class="ansi-red-fg">⠐</span>⠀<span class="ansi-red-fg">⠄</span>⠀<span class="ansi-red-fg">⠐</span>⠀<span class="ansi-black-intense-fg">│</span> <span class="ansi-red-fg">&gt; 0</span>
+        <span class="ansi-black-intense-fg"> │</span>⠀⠀⠀⠀⠀<span class="ansi-red-fg">⠂</span><span class="ansi-red-fg">⡂</span>⠀<span class="ansi-red-fg">⠄</span><span class="ansi-red-fg">⠄</span><span class="ansi-red-fg">⠈</span><span class="ansi-red-fg">⠈</span><span class="ansi-red-fg">⡔</span>⠀⠀<span class="ansi-red-fg">⠁</span><span class="ansi-red-fg">⠂</span>⠀⠀⠀⠀<span class="ansi-red-fg">⠠</span><span class="ansi-red-fg">⠁</span><span class="ansi-red-fg">⠒</span><span class="ansi-red-fg">⠁</span>⠀<span class="ansi-red-fg">⠄</span>⠀<span class="ansi-red-fg">⠐</span>⠀<span class="ansi-red-fg">⠈</span>⠀⠀<span class="ansi-red-fg">⡐</span>⠀⠀<span class="ansi-red-fg">⠠</span>⠀<span class="ansi-red-fg">⡀</span>⠀<span class="ansi-red-fg">⠉</span>⠀<span class="ansi-black-intense-fg">│</span> <span class="ansi-blue-fg">&lt; 0</span>
+        <span class="ansi-black-intense-fg"> │</span>⠀<span class="ansi-red-fg">⠐</span><span class="ansi-red-fg">⠠</span>⠀⠀<span class="ansi-red-fg">⠁</span><span class="ansi-red-fg">⢐</span><span class="ansi-red-fg">⠄</span>⠀<span class="ansi-red-fg">⠢</span><span class="ansi-red-fg">⠠</span>⠀⠀<span class="ansi-red-fg">⡀</span><span class="ansi-red-fg">⠈</span>⠀<span class="ansi-red-fg">⠋</span>⠀⠀⠀⠀⠀<span class="ansi-red-fg">⠂</span><span class="ansi-red-fg">⡀</span>⠀<span class="ansi-red-fg">⠈</span><span class="ansi-red-fg">⠄</span>⠀<span class="ansi-red-fg">⠄</span><span class="ansi-red-fg">⠁</span><span class="ansi-red-fg">⠈</span>⠀<span class="ansi-red-fg">⠠</span>⠀<span class="ansi-red-fg">⠰</span>⠀⠀⠀⠀<span class="ansi-red-fg">⢀</span><span class="ansi-red-fg">⠆</span>⠀<span class="ansi-black-intense-fg">│</span>    
+        <span class="ansi-black-intense-fg"> │</span>⠀<span class="ansi-red-fg">⠈</span><span class="ansi-red-fg">⠠</span><span class="ansi-red-fg">⠂</span>⠀<span class="ansi-red-fg">⠈</span>⠀<span class="ansi-red-fg">⡠</span><span class="ansi-red-fg">⠐</span>⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀<span class="ansi-red-fg">⡀</span><span class="ansi-red-fg">⠈</span><span class="ansi-red-fg">⠄</span><span class="ansi-red-fg">⠁</span><span class="ansi-red-fg">⢀</span><span class="ansi-red-fg">⡀</span><span class="ansi-red-fg">⠐</span><span class="ansi-red-fg">⠄</span><span class="ansi-red-fg">⠄</span>⠀⠀<span class="ansi-red-fg">⢀</span>⠀<span class="ansi-red-fg">⠈</span><span class="ansi-red-fg">⠂</span><span class="ansi-red-fg">⢠</span>⠀<span class="ansi-red-fg">⠢</span><span class="ansi-red-fg">⠐</span>⠀⠀⠀<span class="ansi-red-fg">⡀</span><span class="ansi-black-intense-fg">│</span>    
+        <span class="ansi-black-intense-fg"> │</span>⠀⠀<span class="ansi-red-fg">⠐</span><span class="ansi-red-fg">⡁</span>⠀<span class="ansi-red-fg">⡀</span>⠀⠀<span class="ansi-red-fg">⠠</span>⠀<span class="ansi-red-fg">⠁</span>⠀⠀⠀<span class="ansi-red-fg">⡄</span>⠀<span class="ansi-red-fg">⠈</span><span class="ansi-red-fg">⠁</span>⠀⠀⠀⠀<span class="ansi-red-fg">⠠</span><span class="ansi-red-fg">⠂</span>⠀⠀⠀⠀⠀<span class="ansi-red-fg">⠂</span><span class="ansi-red-fg">⠪</span>⠀⠀<span class="ansi-red-fg">⠂</span>⠀⠀⠀<span class="ansi-red-fg">⠄</span><span class="ansi-red-fg">⢀</span>⠀<span class="ansi-red-fg">⠁</span>⠀<span class="ansi-black-intense-fg">│</span>    
+        <span class="ansi-black-intense-fg"> │</span><span class="ansi-red-fg">⠂</span><span class="ansi-red-fg">⢀</span>⠀<span class="ansi-red-fg">⠁</span>⠀⠀<span class="ansi-red-fg">⡀</span><span class="ansi-red-fg">⡉</span>⠀⠀<span class="ansi-red-fg">⠠</span><span class="ansi-red-fg">⠂</span><span class="ansi-red-fg">⠐</span><span class="ansi-red-fg">⢀</span><span class="ansi-red-fg">⠄</span><span class="ansi-red-fg">⠁</span><span class="ansi-red-fg">⠐</span>⠀<span class="ansi-red-fg">⠈</span>⠀⠀⠀⠀⠀<span class="ansi-red-fg">⡀</span><span class="ansi-red-fg">⠐</span><span class="ansi-red-fg">⠁</span><span class="ansi-red-fg">⡠</span>⠀<span class="ansi-red-fg">⠂</span><span class="ansi-red-fg">⠚</span>⠀<span class="ansi-red-fg">⠁</span>⠀<span class="ansi-red-fg">⠐</span><span class="ansi-red-fg">⢀</span><span class="ansi-red-fg">⠆</span>⠀<span class="ansi-red-fg">⠈</span><span class="ansi-red-fg">⠄</span><span class="ansi-red-fg">⢀</span><span class="ansi-red-fg">⠂</span><span class="ansi-black-intense-fg">│</span>    
+        <span class="ansi-black-intense-fg"> │</span>⠀⠀⠀<span class="ansi-red-fg">⠁</span>⠀<span class="ansi-red-fg">⡄</span>⠀⠀⠀⠀<span class="ansi-red-fg">⠒</span>⠀<span class="ansi-red-fg">⢄</span><span class="ansi-red-fg">⠄</span><span class="ansi-red-fg">⢂</span>⠀<span class="ansi-red-fg">⠂</span>⠀⠀<span class="ansi-red-fg">⠄</span>⠀<span class="ansi-red-fg">⢀</span>⠀<span class="ansi-red-fg">⠣</span>⠀<span class="ansi-red-fg">⢀</span>⠀⠀⠀⠀<span class="ansi-red-fg">⠠</span><span class="ansi-red-fg">⡀</span>⠀⠀<span class="ansi-red-fg">⢠</span><span class="ansi-red-fg">⠄</span>⠀<span class="ansi-red-fg">⡀</span>⠀<span class="ansi-red-fg">⠂</span><span class="ansi-red-fg">⠂</span>⠀<span class="ansi-black-intense-fg">│</span>    
+        <span class="ansi-black-intense-fg"> │</span><span class="ansi-red-fg">⢀</span><span class="ansi-red-fg">⠈</span>⠀⠀<span class="ansi-red-fg">⠂</span>⠀⠀<span class="ansi-red-fg">⠁</span><span class="ansi-red-fg">⢠</span><span class="ansi-red-fg">⠈</span><span class="ansi-red-fg">⠄</span><span class="ansi-red-fg">⠁</span>⠀⠀<span class="ansi-red-fg">⡈</span><span class="ansi-red-fg">⠈</span><span class="ansi-red-fg">⠠</span>⠀<span class="ansi-red-fg">⢀</span><span class="ansi-red-fg">⡦</span>⠀⠀<span class="ansi-red-fg">⠅</span><span class="ansi-red-fg">⠐</span>⠀<span class="ansi-red-fg">⠨</span><span class="ansi-red-fg">⠁</span><span class="ansi-red-fg">⠨</span>⠀<span class="ansi-red-fg">⠄</span><span class="ansi-red-fg">⠠</span><span class="ansi-red-fg">⢀</span>⠀<span class="ansi-red-fg">⠐</span><span class="ansi-red-fg">⢐</span>⠀⠀<span class="ansi-red-fg">⠉</span>⠀⠀<span class="ansi-red-fg">⠠</span><span class="ansi-red-fg">⠉</span><span class="ansi-black-intense-fg">│</span>    
+        <span class="ansi-black-intense-fg"> │</span>⠀⠀<span class="ansi-red-fg">⠨</span>⠀<span class="ansi-red-fg">⠋</span>⠀<span class="ansi-red-fg">⠄</span>⠀<span class="ansi-red-fg">⠂</span>⠀<span class="ansi-red-fg">⠈</span>⠀⠀⠀<span class="ansi-red-fg">⠈</span>⠀⠀⠀⠀<span class="ansi-red-fg">⡑</span>⠀<span class="ansi-red-fg">⢀</span><span class="ansi-red-fg">⠈</span><span class="ansi-red-fg">⠈</span>⠀⠀⠀<span class="ansi-red-fg">⠈</span>⠀<span class="ansi-red-fg">⠂</span><span class="ansi-red-fg">⠐</span><span class="ansi-red-fg">⠼</span>⠀<span class="ansi-red-fg">⠠</span>⠀⠀<span class="ansi-red-fg">⡈</span><span class="ansi-red-fg">⠁</span>⠀⠀<span class="ansi-red-fg">⠡</span><span class="ansi-red-fg">⠄</span><span class="ansi-black-intense-fg">│</span>    
+        <span class="ansi-black-intense-fg"> │</span><span class="ansi-red-fg">⠠</span><span class="ansi-red-fg">⡁</span>⠀⠀⠀⠀⠀⠀⠀⠀<span class="ansi-red-fg">⠂</span><span class="ansi-red-fg">⢀</span>⠀⠀⠀<span class="ansi-red-fg">⡄</span>⠀⠀⠀<span class="ansi-red-fg">⠤</span>⠀⠀<span class="ansi-red-fg">⠁</span>⠀<span class="ansi-red-fg">⡂</span>⠀⠀⠀<span class="ansi-red-fg">⠄</span>⠀<span class="ansi-red-fg">⢈</span>⠀<span class="ansi-red-fg">⢔</span><span class="ansi-red-fg">⡊</span><span class="ansi-red-fg">⣨</span><span class="ansi-red-fg">⠈</span><span class="ansi-red-fg">⠂</span>⠀<span class="ansi-red-fg">⠄</span><span class="ansi-red-fg">⢀</span>⠀⠀<span class="ansi-black-intense-fg">│</span>    
+        <span class="ansi-black-intense-fg"> │</span>⠀<span class="ansi-red-fg">⠂</span>⠀<span class="ansi-red-fg">⠈</span>⠀⠀⠀⠀⠀⠀<span class="ansi-red-fg">⠈</span>⠀<span class="ansi-red-fg">⡀</span>⠀<span class="ansi-red-fg">⠂</span><span class="ansi-red-fg">⠠</span><span class="ansi-red-fg">⠐</span>⠀<span class="ansi-red-fg">⠄</span>⠀⠀⠀⠀⠀⠀<span class="ansi-red-fg">⠤</span>⠀⠀⠀<span class="ansi-red-fg">⠠</span><span class="ansi-red-fg">⠘</span><span class="ansi-red-fg">⠐</span>⠀<span class="ansi-red-fg">⠄</span><span class="ansi-red-fg">⢘</span>⠀⠀<span class="ansi-red-fg">⢐</span><span class="ansi-red-fg">⠄</span>⠀<span class="ansi-red-fg">⠁</span>⠀<span class="ansi-black-intense-fg">│</span>    
+        <span class="ansi-black-intense-fg"> │</span><span class="ansi-red-fg">⢀</span><span class="ansi-red-fg">⠄</span><span class="ansi-red-fg">⢠</span><span class="ansi-red-fg">⠄</span><span class="ansi-red-fg">⡊</span><span class="ansi-red-fg">⠂</span><span class="ansi-red-fg">⠢</span><span class="ansi-red-fg">⢀</span>⠀⠀⠀⠀<span class="ansi-red-fg">⠄</span><span class="ansi-red-fg">⡀</span><span class="ansi-red-fg">⡑</span>⠀<span class="ansi-red-fg">⡐</span>⠀<span class="ansi-red-fg">⠁</span><span class="ansi-red-fg">⡂</span>⠀⠀⠀<span class="ansi-red-fg">⠰</span><span class="ansi-red-fg">⠂</span><span class="ansi-red-fg">⢠</span><span class="ansi-red-fg">⠄</span><span class="ansi-red-fg">⠈</span>⠀<span class="ansi-red-fg">⠈</span><span class="ansi-red-fg">⠐</span>⠀⠀⠀<span class="ansi-red-fg">⠉</span>⠀⠀<span class="ansi-red-fg">⡀</span>⠀⠀<span class="ansi-red-fg">⠃</span>⠀<span class="ansi-black-intense-fg">│</span>    
+        <span class="ansi-black-intense-fg"> │</span>⠀⠀<span class="ansi-red-fg">⠅</span>⠀<span class="ansi-red-fg">⡁</span>⠀⠀⠀⠀⠀<span class="ansi-red-fg">⢁</span><span class="ansi-red-fg">⢀</span>⠀<span class="ansi-red-fg">⡀</span><span class="ansi-red-fg">⡀</span><span class="ansi-red-fg">⡐</span>⠀⠀<span class="ansi-red-fg">⠈</span><span class="ansi-red-fg">⠈</span><span class="ansi-red-fg">⠔</span><span class="ansi-red-fg">⠄</span>⠀⠀<span class="ansi-red-fg">⢀</span>⠀⠀⠀⠀⠀⠀⠀⠀<span class="ansi-red-fg">⠄</span><span class="ansi-red-fg">⢉</span><span class="ansi-red-fg">⠠</span><span class="ansi-red-fg">⠁</span>⠀<span class="ansi-red-fg">⠁</span>⠀⠀⠀<span class="ansi-black-intense-fg">│</span>    
+        <span class="ansi-black-intense-fg"> │</span><span class="ansi-red-fg">⠊</span><span class="ansi-red-fg">⢈</span>⠀<span class="ansi-red-fg">⠁</span>⠀⠀⠀<span class="ansi-red-fg">⠅</span>⠀<span class="ansi-red-fg">⠂</span>⠀<span class="ansi-red-fg">⡀</span>⠀⠀⠀⠀<span class="ansi-red-fg">⡀</span>⠀⠀<span class="ansi-red-fg">⠐</span><span class="ansi-red-fg">⠄</span><span class="ansi-red-fg">⠁</span><span class="ansi-red-fg">⠠</span>⠀<span class="ansi-red-fg">⠐</span><span class="ansi-red-fg">⠈</span>⠀⠀⠀<span class="ansi-red-fg">⡀</span><span class="ansi-red-fg">⢠</span>⠀⠀⠀<span class="ansi-red-fg">⢰</span>⠀⠀⠀<span class="ansi-red-fg">⢀</span>⠀<span class="ansi-red-fg">⠠</span><span class="ansi-red-fg">⠂</span><span class="ansi-black-intense-fg">│</span>    
+        <span class="ansi-black-intense-fg"> │</span><span class="ansi-red-fg">⠈</span>⠀⠀<span class="ansi-red-fg">⠈</span><span class="ansi-red-fg">⠄</span>⠀⠀<span class="ansi-red-fg">⠄</span><span class="ansi-red-fg">⠐</span>⠀<span class="ansi-red-fg">⠠</span><span class="ansi-red-fg">⠁</span><span class="ansi-red-fg">⠁</span>⠀<span class="ansi-red-fg">⡂</span>⠀<span class="ansi-red-fg">⠠</span><span class="ansi-red-fg">⠄</span><span class="ansi-red-fg">⠌</span><span class="ansi-red-fg">⠅</span><span class="ansi-red-fg">⣀</span>⠀⠀<span class="ansi-red-fg">⢀</span>⠀<span class="ansi-red-fg">⠠</span>⠀<span class="ansi-red-fg">⠠</span><span class="ansi-red-fg">⠠</span>⠀<span class="ansi-red-fg">⠲</span><span class="ansi-red-fg">⢂</span>⠀<span class="ansi-red-fg">⠰</span><span class="ansi-red-fg">⡄</span>⠀<span class="ansi-red-fg">⢀</span><span class="ansi-red-fg">⠬</span><span class="ansi-red-fg">⠈</span>⠀⠀⠀<span class="ansi-black-intense-fg">│</span>    
+        <span class="ansi-black-intense-fg"> │</span><span class="ansi-red-fg">⠈</span>⠀⠀<span class="ansi-red-fg">⠄</span>⠀⠀<span class="ansi-red-fg">⡀</span><span class="ansi-red-fg">⠈</span>⠀⠀<span class="ansi-red-fg">⠙</span>⠀⠀⠀<span class="ansi-red-fg">⢀</span><span class="ansi-red-fg">⢀</span><span class="ansi-red-fg">⠂</span>⠀⠀<span class="ansi-red-fg">⡄</span><span class="ansi-red-fg">⢀</span>⠀<span class="ansi-red-fg">⠠</span>⠀<span class="ansi-red-fg">⠂</span>⠀⠀<span class="ansi-red-fg">⠐</span>⠀⠀<span class="ansi-red-fg">⠸</span>⠀⠀⠀<span class="ansi-red-fg">⠈</span><span class="ansi-red-fg">⠠</span>⠀<span class="ansi-red-fg">⠠</span><span class="ansi-red-fg">⠁</span>⠀<span class="ansi-red-fg">⠂</span>⠀<span class="ansi-black-intense-fg">│</span>    
+        <span class="ansi-black-intense-fg"> │</span><span class="ansi-red-fg">⠄</span>⠀⠀⠀<span class="ansi-red-fg">⠄</span><span class="ansi-red-fg">⠂</span><span class="ansi-red-fg">⠂</span>⠀⠀⠀<span class="ansi-red-fg">⠡</span><span class="ansi-red-fg">⠁</span>⠀<span class="ansi-red-fg">⢉</span><span class="ansi-red-fg">⠄</span>⠀⠀⠀<span class="ansi-red-fg">⡐</span><span class="ansi-red-fg">⠑</span><span class="ansi-red-fg">⠂</span><span class="ansi-red-fg">⠄</span><span class="ansi-red-fg">⠂</span>⠀⠀⠀<span class="ansi-red-fg">⢀</span>⠀<span class="ansi-red-fg">⢀</span>⠀⠀⠀⠀<span class="ansi-red-fg">⠉</span><span class="ansi-red-fg">⠠</span><span class="ansi-red-fg">⠈</span>⠀<span class="ansi-red-fg">⠁</span>⠀⠀<span class="ansi-red-fg">⡀</span><span class="ansi-red-fg">⠄</span><span class="ansi-black-intense-fg">│</span>    
+        <span class="ansi-black-intense-fg"> │</span>⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀<span class="ansi-red-fg">⠠</span><span class="ansi-red-fg">⠂</span>⠀⠀<span class="ansi-red-fg">⠄</span>⠀⠀⠀⠀<span class="ansi-red-fg">⠐</span><span class="ansi-red-fg">⡀</span>⠀⠀<span class="ansi-red-fg">⠁</span>⠀<span class="ansi-red-fg">⠐</span>⠀⠀⠀<span class="ansi-red-fg">⢰</span><span class="ansi-red-fg">⡄</span><span class="ansi-red-fg">⠁</span>⠀⠀<span class="ansi-red-fg">⠉</span><span class="ansi-red-fg">⠠</span>⠀<span class="ansi-red-fg">⠠</span>⠀<span class="ansi-red-fg">⡀</span>⠀<span class="ansi-black-intense-fg">│</span>    
+        <span class="ansi-black-intense-fg"> │</span><span class="ansi-red-fg">⡁</span><span class="ansi-red-fg">⠄</span><span class="ansi-red-fg">⢀</span><span class="ansi-red-fg">⠂</span>⠀<span class="ansi-red-fg">⠁</span><span class="ansi-red-fg">⡈</span><span class="ansi-red-fg">⠆</span>⠀<span class="ansi-red-fg">⠄</span><span class="ansi-red-fg">⠁</span><span class="ansi-red-fg">⠁</span>⠀<span class="ansi-red-fg">⠂</span><span class="ansi-red-fg">⠁</span>⠀<span class="ansi-red-fg">⠂</span><span class="ansi-red-fg">⢀</span>⠀⠀⠀⠀⠀⠀<span class="ansi-red-fg">⠁</span>⠀⠀<span class="ansi-red-fg">⡀</span>⠀<span class="ansi-red-fg">⠐</span>⠀⠀⠀⠀⠀⠀⠀<span class="ansi-red-fg">⢀</span><span class="ansi-red-fg">⠄</span><span class="ansi-red-fg">⠤</span><span class="ansi-red-fg">⠁</span><span class="ansi-red-fg">⠠</span><span class="ansi-black-intense-fg">│</span>    
+        <span class="ansi-black-intense-fg"> │</span>⠀<span class="ansi-red-fg">⠅</span><span class="ansi-red-fg">⠄</span><span class="ansi-red-fg">⠈</span>⠀<span class="ansi-red-fg">⢀</span><span class="ansi-red-fg">⠂</span><span class="ansi-red-fg">⠁</span><span class="ansi-red-fg">⠐</span>⠀<span class="ansi-red-fg">⡠</span><span class="ansi-red-fg">⠄</span>⠀<span class="ansi-red-fg">⠄</span><span class="ansi-red-fg">⠐</span>⠀⠀⠀⠀<span class="ansi-red-fg">⡀</span>⠀<span class="ansi-red-fg">⠁</span><span class="ansi-red-fg">⡢</span>⠀<span class="ansi-red-fg">⠙</span>⠀<span class="ansi-red-fg">⠇</span>⠀<span class="ansi-red-fg">⢂</span>⠀<span class="ansi-red-fg">⣠</span>⠀<span class="ansi-red-fg">⠂</span>⠀⠀<span class="ansi-red-fg">⠂</span>⠀<span class="ansi-red-fg">⠥</span><span class="ansi-red-fg">⠄</span><span class="ansi-red-fg">⢁</span><span class="ansi-red-fg">⡀</span><span class="ansi-red-fg">⡀</span><span class="ansi-black-intense-fg">│</span>    
+   <span class="ansi-black-intense-fg">10000</span><span class="ansi-black-intense-fg"> │</span><span class="ansi-red-fg">⠘</span>⠀⠀⠀<span class="ansi-red-fg">⠈</span><span class="ansi-red-fg">⠃</span><span class="ansi-red-fg">⡁</span><span class="ansi-red-fg">⠨</span><span class="ansi-red-fg">⠁</span><span class="ansi-red-fg">⠐</span>⠀⠀<span class="ansi-red-fg">⠈</span><span class="ansi-red-fg">⠁</span><span class="ansi-red-fg">⠄</span>⠀<span class="ansi-red-fg">⠁</span>⠀⠀<span class="ansi-red-fg">⠂</span><span class="ansi-red-fg">⠁</span><span class="ansi-red-fg">⢈</span><span class="ansi-red-fg">⠁</span>⠀⠀<span class="ansi-red-fg">⡁</span>⠀⠀⠀<span class="ansi-red-fg">⢀</span><span class="ansi-red-fg">⢰</span>⠀⠀<span class="ansi-red-fg">⠈</span>⠀<span class="ansi-red-fg">⠈</span>⠀⠀⠀⠀<span class="ansi-red-fg">⡂</span>⠀<span class="ansi-black-intense-fg">│</span>    
+<span class="ansi-black-intense-fg">         └──────────────────────────────────────────┘</span>    
+<span class="ansi-black-intense-fg">         1</span><span class="ansi-black-intense-fg">                    </span><span class="ansi-black-intense-fg">                  10000</span>
+                          nz = 600</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Hint</strong>: For plots, you can use the <a href="https://github.com/Evizero/UnicodePlots.jl">UnicodePlots.jl</a> package (<code>spy</code>, <code>histogram</code>, etc), which is fast for large data.</p>
 
 </div>
@@ -13221,6 +13771,10 @@ $r_i = \sum_j a_{ij}$ is the out-degree of page $i$. That is $r_i$ is the number
 <li>A dense eigen-solver for asymmetric matrix.  </li>
 </ol>
 <p>For the LU approach, estimate (1) the memory usage and (2) how long it will take assuming that the LAPACK functions can achieve the theoretical throughput of your computer.</p>
+<p><strong>Solutions:</strong></p>
+<ol>
+<li><strong>For LU approach</strong>, it will need to store n by n matrix for coefficient and n vector for the results, which will need in total of $916428^2*8+916428*8= 6718.73\mathrm{GB}$. Assume we can do $10^{12}$ flops per second and it will take $(2\times(916428)^3/3+ 2\times(916428)^2)/10^{12}= 513103$ second $\approx$ 5.94 days</li>
+</ol>
 
 </div>
 </div>
@@ -13248,7 +13802,7 @@ $r_i = \sum_j a_{ij}$ is the out-degree of page $i$. That is $r_i$ is the number
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">BenchmarkTools</span><span class="p">,</span> <span class="n">LinearAlgebra</span><span class="p">,</span> <span class="n">SparseArrays</span><span class="p">,</span> <span class="n">Revise</span>
@@ -13259,27 +13813,204 @@ $r_i = \sum_j a_{ij}$ is the out-degree of page $i$. That is $r_i$ is the number
     <span class="n">telep</span>     <span class="o">::</span> <span class="n">T</span>
     <span class="c"># working arrays</span>
     <span class="c"># TODO: whatever intermediate arrays you may want to pre-allocate</span>
+    <span class="n">oneV</span>      <span class="o">::</span> <span class="kt">Vector</span><span class="p">{</span><span class="n">T</span><span class="p">}</span>
+    <span class="n">R</span>         <span class="o">::</span> <span class="kt">Vector</span><span class="p">{</span><span class="n">T</span><span class="p">}</span>
+    <span class="n">d</span>         <span class="o">::</span> <span class="kt">Vector</span><span class="p">{</span><span class="n">T</span><span class="p">}</span>
+    <span class="n">z</span>         <span class="o">::</span> <span class="kt">Vector</span><span class="p">{</span><span class="n">T</span><span class="p">}</span>
+    <span class="n">ztv</span>       <span class="o">::</span> <span class="kt">Vector</span><span class="p">{</span><span class="n">T</span><span class="p">}</span>
+    <span class="n">dtv</span>       <span class="o">::</span> <span class="kt">Vector</span><span class="p">{</span><span class="n">T</span><span class="p">}</span>
+    <span class="n">Atdtv</span>     <span class="o">::</span> <span class="kt">Vector</span><span class="p">{</span><span class="n">T</span><span class="p">}</span>
+    <span class="n">out</span>       <span class="o">::</span> <span class="kt">Vector</span><span class="p">{</span><span class="n">T</span><span class="p">}</span>
+    
 <span class="k">end</span>
 
 <span class="c"># constructor</span>
 <span class="k">function</span> <span class="n">PageRankImPt</span><span class="p">(</span><span class="n">A</span><span class="o">::</span><span class="kt">SparseMatrixCSC</span><span class="p">,</span> <span class="n">telep</span><span class="o">::</span><span class="n">T</span><span class="p">)</span> <span class="n">where</span> <span class="n">T</span> <span class="o">&lt;:</span> <span class="kt">AbstractFloat</span>
     <span class="n">n</span> <span class="o">=</span> <span class="n">size</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    
+    <span class="n">oneV</span> <span class="o">=</span> <span class="n">ones</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
     <span class="c"># TODO: initialize and pre-allocate arrays</span>
-    <span class="n">PageRankImPt</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">telep</span><span class="p">)</span>
+    <span class="c"># R = vec(sum(A, dims=2))</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="n">A</span><span class="o">*</span><span class="n">ones</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    
+    <span class="c"># Pre-allocate and cal decomposed matrix P</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="kt">Vector</span><span class="p">{</span><span class="n">T</span><span class="p">}(</span><span class="n">undef</span><span class="p">,</span><span class="n">n</span><span class="p">)</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="kt">Vector</span><span class="p">{</span><span class="n">T</span><span class="p">}(</span><span class="n">undef</span><span class="p">,</span><span class="n">n</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="kp">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">n</span>
+        <span class="k">if</span> <span class="n">R</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+            <span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">z</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="n">n</span>
+        <span class="k">else</span>
+            <span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">z</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">telep</span><span class="o">/</span><span class="n">R</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">telep</span><span class="p">)</span><span class="o">/</span><span class="n">n</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+    
+    <span class="c"># changing Vectors for updating Mv</span>
+    <span class="n">dtv</span> <span class="o">=</span> <span class="n">similar</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+    <span class="n">Atdtv</span> <span class="o">=</span> <span class="n">similar</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+    <span class="n">ztv</span> <span class="o">=</span> <span class="n">similar</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">similar</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+    
+    <span class="n">PageRankImPt</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">telep</span><span class="p">,</span> <span class="n">oneV</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">ztv</span><span class="p">,</span> <span class="n">dtv</span><span class="p">,</span> <span class="n">Atdtv</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span>
 <span class="k">end</span>
+</pre></div>
 
-<span class="n">LinearAlgebra</span><span class="o">.</span><span class="n">issymmetric</span><span class="p">(</span><span class="o">::</span><span class="n">PageRankImPt</span><span class="p">)</span> <span class="o">=</span> <span class="kc">false</span>
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[5]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>PageRankImPt</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[112]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="o">?</span><span class="n">rmul!</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>search: <span class="ansi-bold">r</span><span class="ansi-bold">m</span><span class="ansi-bold">u</span><span class="ansi-bold">l</span><span class="ansi-bold">!</span> ba<span class="ansi-bold">r</span>e<span class="ansi-bold">m</span>od<span class="ansi-bold">u</span><span class="ansi-bold">l</span>e pa<span class="ansi-bold">r</span>ent<span class="ansi-bold">m</span>od<span class="ansi-bold">u</span><span class="ansi-bold">l</span>e p<span class="ansi-bold">r</span>o<span class="ansi-bold">m</span>ote_r<span class="ansi-bold">u</span><span class="ansi-bold">l</span>e
+
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[112]:</div>
+
+
+
+<div class="output_markdown rendered_html output_subarea output_execute_result">
+
+<pre><code>rmul!(A::AbstractArray, b::Number)</code></pre>
+<p>Scale an array <code>A</code> by a scalar <code>b</code> overwriting <code>A</code> in-place.  Use <a href="@ref"><code>lmul!</code></a> to multiply scalar from left.  The scaling operation respects the semantics of the multiplication <a href="@ref"><code>*</code></a> between an element of <code>A</code> and <code>b</code>.  In particular, this also applies to multiplication involving non-finite numbers such as <code>NaN</code> and <code>±Inf</code>.</p>
+<p>!!! compat "Julia 1.1"
+    Prior to Julia 1.1, <code>NaN</code> and <code>±Inf</code> entries in <code>A</code> were treated inconsistently.</p>
+<h1 id="Examples">Examples<a class="anchor-link" href="#Examples">&#182;</a></h1>
+<pre><code>jldoctest
+julia&gt; A = [1 2; 3 4]
+2×2 Array{Int64,2}:
+ 1  2
+ 3  4
+
+julia&gt; rmul!(A, 2)
+2×2 Array{Int64,2}:
+ 2  4
+ 6  8
+
+julia&gt; rmul!([NaN], 0.0)
+1-element Array{Float64,1}:
+ NaN</code></pre>
+<hr>
+
+<pre><code>rmul!(A, B)</code></pre>
+<p>Calculate the matrix-matrix product $AB$, overwriting <code>A</code>, and return the result. Here, <code>B</code> must be of special matrix type, like, e.g., <a href="@ref"><code>Diagonal</code></a>, <a href="@ref"><code>UpperTriangular</code></a> or <a href="@ref"><code>LowerTriangular</code></a>, or of some orthogonal type, see <a href="@ref"><code>QR</code></a>.</p>
+<h1 id="Examples">Examples<a class="anchor-link" href="#Examples">&#182;</a></h1>
+<pre><code>jldoctest
+julia&gt; A = [0 1; 1 0];
+
+julia&gt; B = LinearAlgebra.UpperTriangular([1 2; 0 3]);
+
+julia&gt; LinearAlgebra.rmul!(A, B);
+
+julia&gt; A
+2×2 Array{Int64,2}:
+ 0  3
+ 1  2
+
+julia&gt; A = [1.0 2.0; 3.0 4.0];
+
+julia&gt; F = qr([0 1; -1 0]);
+
+julia&gt; rmul!(A, F.Q)
+2×2 Array{Float64,2}:
+ 2.0  1.0
+ 4.0  3.0</code></pre>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="n">LinearAlgebra</span><span class="o">.</span><span class="n">issymmetric</span><span class="p">(</span><span class="o">::</span><span class="n">PageRankImPt</span><span class="p">)</span> <span class="o">=</span> <span class="kc">false</span>
 <span class="n">Base</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">M</span><span class="o">::</span><span class="n">PageRankImPt</span><span class="p">)</span> <span class="o">=</span> <span class="n">size</span><span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">A</span><span class="p">)</span>
 <span class="c"># TODO: implement this function for evaluating M[i, j]</span>
 <span class="n">Base</span><span class="o">.</span><span class="n">getindex</span><span class="p">(</span><span class="n">M</span><span class="o">::</span><span class="n">PageRankImPt</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">telep</span>
+<span class="c"># implement the basic function for struct PageRankImPt</span>
+<span class="k">function</span> <span class="n">Base</span><span class="o">.</span><span class="n">getindex</span><span class="p">(</span><span class="n">M</span><span class="o">::</span><span class="n">PageRankImPt</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">i</span><span class="o">==</span><span class="n">j</span>
+        <span class="k">return</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">M</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">*</span> <span class="n">M</span><span class="o">.</span><span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">M</span><span class="o">.</span><span class="n">z</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="k">else</span>
+        <span class="k">return</span> <span class="p">(</span><span class="o">-</span><span class="n">M</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">*</span> <span class="n">M</span><span class="o">.</span><span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">M</span><span class="o">.</span><span class="n">z</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="k">end</span>
+<span class="k">end</span>
+</pre></div>
 
-<span class="c"># overwrite `out` by `(I - Pt) * v`</span>
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># overwrite `out` by `(I - Pt) * v`</span>
 <span class="k">function</span> <span class="n">LinearAlgebra</span><span class="o">.</span><span class="n">mul!</span><span class="p">(</span>
         <span class="n">out</span> <span class="o">::</span> <span class="kt">Vector</span><span class="p">{</span><span class="n">T</span><span class="p">},</span> 
         <span class="n">M</span>   <span class="o">::</span> <span class="n">PageRankImPt</span><span class="p">{</span><span class="o">&lt;:</span><span class="kt">Number</span><span class="p">,</span> <span class="o">&lt;:</span><span class="kt">Integer</span><span class="p">,</span> <span class="n">T</span><span class="p">},</span> 
         <span class="n">v</span>   <span class="o">::</span> <span class="kt">Vector</span><span class="p">{</span><span class="n">T</span><span class="p">})</span> <span class="n">where</span> <span class="n">T</span> <span class="o">&lt;:</span> <span class="kt">AbstractFloat</span>
     <span class="c"># TODO: implement mul!(out, M, v)</span>
-    <span class="n">sleep</span><span class="p">(</span><span class="mf">1e-2</span><span class="p">)</span> <span class="c"># wait 10 ms as if your code takes 1ms</span>
+    <span class="c">#D^Tv = &gt; A^TD^Tv</span>
+    <span class="n">M</span><span class="o">.</span><span class="n">dtv</span> <span class="o">.=</span> <span class="n">M</span><span class="o">.</span><span class="n">d</span> <span class="o">.*</span> <span class="n">v</span>
+    <span class="n">mul!</span><span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">Atdtv</span><span class="p">,</span> <span class="n">transpose</span><span class="p">(</span><span class="n">A</span><span class="p">),</span> <span class="n">M</span><span class="o">.</span><span class="n">dtv</span><span class="p">)</span>
+    
+    <span class="c">#1z^Tv</span>
+    <span class="n">M</span><span class="o">.</span><span class="n">ztv</span> <span class="o">.=</span> <span class="n">dot</span><span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">z</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span><span class="o">.*</span><span class="n">M</span><span class="o">.</span><span class="n">oneV</span>
+    
+    <span class="n">out</span> <span class="o">.=</span> <span class="n">v</span> <span class="o">.-</span> <span class="n">M</span><span class="o">.</span><span class="n">ztv</span> <span class="o">.-</span> <span class="n">M</span><span class="o">.</span><span class="n">Atdtv</span>
     <span class="k">return</span> <span class="n">out</span>
 <span class="k">end</span>
 
@@ -13290,8 +14021,14 @@ $r_i = \sum_j a_{ij}$ is the out-degree of page $i$. That is $r_i$ is the number
         <span class="n">v</span>   <span class="o">::</span> <span class="kt">Vector</span><span class="p">{</span><span class="n">T</span><span class="p">})</span> <span class="n">where</span> <span class="p">{</span><span class="n">TA</span><span class="o">&lt;:</span><span class="kt">Number</span><span class="p">,</span> <span class="n">IA</span><span class="o">&lt;:</span><span class="kt">Integer</span><span class="p">,</span> <span class="n">T</span> <span class="o">&lt;:</span> <span class="kt">AbstractFloat</span><span class="p">}</span>
     <span class="n">M</span> <span class="o">=</span> <span class="n">Mt</span><span class="o">.</span><span class="n">parent</span>
     <span class="c"># TODO: implement mul!(out, transpose(M), v)</span>
-    <span class="n">sleep</span><span class="p">(</span><span class="mf">1e-2</span><span class="p">)</span> <span class="c"># wait 10 ms as if your code takes 1ms</span>
-    <span class="n">out</span>
+    <span class="n">mul!</span><span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">dtv</span><span class="p">,</span> <span class="n">M</span><span class="o">.</span><span class="n">A</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="c"># actually calculate AV here</span>
+    <span class="n">M</span><span class="o">.</span><span class="n">Atdtv</span> <span class="o">.=</span> <span class="n">M</span><span class="o">.</span><span class="n">d</span> <span class="o">.*</span> <span class="n">M</span><span class="o">.</span><span class="n">dtv</span>  <span class="c"># actually calculate DAV </span>
+    
+    <span class="n">M</span><span class="o">.</span><span class="n">ztv</span> <span class="o">.=</span> <span class="n">M</span><span class="o">.</span><span class="n">z</span> <span class="o">.*</span> <span class="p">(</span><span class="n">sum</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.*</span><span class="n">M</span><span class="o">.</span><span class="n">oneV</span><span class="p">)</span> <span class="c"># actually calculate Z1&#39;V</span>
+    <span class="c"># out variable will be re-allocated when calling the function</span>
+    <span class="c"># and thus no need to pre-allocate in the structure</span>
+    <span class="n">out</span> <span class="o">.=</span> <span class="n">v</span> <span class="o">.-</span> <span class="n">M</span><span class="o">.</span><span class="n">Atdtv</span> <span class="o">.-</span> <span class="n">M</span><span class="o">.</span><span class="n">ztv</span>
+    <span class="k">return</span> <span class="n">out</span>
 <span class="k">end</span>
 </pre></div>
 
@@ -13319,13 +14056,13 @@ for stationary distribution $\mathbf{x}$.</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">DelimitedFiles</span>
 
 <span class="n">isfile</span><span class="p">(</span><span class="s">&quot;pgrksol.csv&quot;</span><span class="p">)</span> <span class="o">||</span> <span class="n">download</span><span class="p">(</span><span class="s">&quot;https://raw.githubusercontent.com/ucla-biostat-257-2020spring/ucla-biostat-257-2020spring.github.io/master/hw/hw3/pgrksol.csv&quot;</span><span class="p">)</span>
-<span class="n">xsol</span> <span class="o">=</span> <span class="n">vec</span><span class="p">(</span><span class="n">readdlm</span><span class="p">(</span><span class="s">&quot;pgrksol.csv&quot;</span><span class="p">))</span>
+<span class="n">xsol</span> <span class="o">=</span> <span class="n">vec</span><span class="p">(</span><span class="n">readdlm</span><span class="p">(</span><span class="s">&quot;pgrksol.csv&quot;</span><span class="p">));</span>
 </pre></div>
 
     </div>
@@ -13343,13 +14080,15 @@ for stationary distribution $\mathbf{x}$.</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">M</span> <span class="o">=</span> <span class="n">PageRankImPt</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="mf">0.85</span><span class="p">)</span>
 <span class="n">n</span> <span class="o">=</span> <span class="n">size</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
-<span class="nd">@assert</span> <span class="n">transpose</span><span class="p">(</span><span class="n">M</span><span class="p">)</span> <span class="o">*</span> <span class="n">ones</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="n">≈</span> <span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="c"># @assert transpose(M) * ones(n) ≈ zeros(n)</span>
+<span class="c"># Use the relaxed criteria</span>
+<span class="nd">@assert</span> <span class="n">norm</span><span class="p">(</span><span class="n">transpose</span><span class="p">(</span><span class="n">M</span><span class="p">)</span> <span class="o">*</span> <span class="n">ones</span><span class="p">(</span><span class="n">n</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mf">1e-12</span>
 </pre></div>
 
     </div>
@@ -13359,10 +14098,12 @@ for stationary distribution $\mathbf{x}$.</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="nd">@assert</span> <span class="n">M</span> <span class="o">*</span> <span class="n">xsol</span> <span class="n">≈</span> <span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># @assert M * xsol ≈ zeros(n)</span>
+<span class="c"># Use the relaxed criteria</span>
+<span class="nd">@assert</span> <span class="n">norm</span><span class="p">(</span><span class="n">M</span> <span class="o">*</span> <span class="n">xsol</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-12</span>
 </pre></div>
 
     </div>
@@ -13380,7 +14121,7 @@ for stationary distribution $\mathbf{x}$.</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">M</span> <span class="o">=</span> <span class="n">PageRankImPt</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="mf">0.85</span><span class="p">)</span>
@@ -13393,16 +14134,76 @@ for stationary distribution $\mathbf{x}$.</p>
 </div>
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[16]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>BenchmarkTools.Trial: 
+  memory estimate:  16 bytes
+  allocs estimate:  1
+  --------------
+  minimum time:     23.605 ms (0.00% GC)
+  median time:      25.278 ms (0.00% GC)
+  mean time:        26.377 ms (0.00% GC)
+  maximum time:     29.865 ms (0.00% GC)
+  --------------
+  samples:          184
+  evals/sample:     1</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">bm_mtv</span> <span class="o">=</span> <span class="nd">@benchmark</span> <span class="n">mul!</span><span class="p">(</span><span class="o">$</span><span class="n">out</span><span class="p">,</span> <span class="o">$</span><span class="p">(</span><span class="n">transpose</span><span class="p">(</span><span class="n">M</span><span class="p">)),</span> <span class="o">$</span><span class="n">v</span><span class="p">)</span> <span class="n">setup</span><span class="o">=</span><span class="p">(</span><span class="n">fill!</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span> <span class="n">fill!</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 </pre></div>
 
     </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[17]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>BenchmarkTools.Trial: 
+  memory estimate:  0 bytes
+  allocs estimate:  0
+  --------------
+  minimum time:     24.118 ms (0.00% GC)
+  median time:      24.468 ms (0.00% GC)
+  mean time:        24.731 ms (0.00% GC)
+  maximum time:     29.312 ms (0.00% GC)
+  --------------
+  samples:          195
+  evals/sample:     1</pre>
+</div>
+
+</div>
+
 </div>
 </div>
 
@@ -13417,7 +14218,7 @@ for stationary distribution $\mathbf{x}$.</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">clamp</span><span class="p">(</span><span class="mi">10</span> <span class="o">-</span> <span class="n">median</span><span class="p">(</span><span class="n">bm_mv</span><span class="p">)</span><span class="o">.</span><span class="n">memory</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span> <span class="o">+</span> 
@@ -13425,6 +14226,26 @@ for stationary distribution $\mathbf{x}$.</p>
 </pre></div>
 
     </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[18]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>19.84</pre>
+</div>
+
+</div>
+
 </div>
 </div>
 
@@ -13447,7 +14268,7 @@ for stationary distribution $\mathbf{x}$.</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[19]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">KrylovKit</span>
@@ -13457,15 +14278,82 @@ for stationary distribution $\mathbf{x}$.</p>
 <span class="n">x0</span> <span class="o">./=</span> <span class="n">sum</span><span class="p">(</span><span class="n">x0</span><span class="p">)</span>
 
 <span class="c"># right hand side</span>
-<span class="n">b</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
+</pre></div>
 
-<span class="c"># warm up (compilation)</span>
-<span class="n">linsolve</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">issymmetric</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span> <span class="n">isposdef</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span> <span class="n">maxiter</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> 
-<span class="c"># output is complex eigenvalue/eigenvector</span>
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># warm up (compilation)</span>
+<span class="n">linsolve</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">issymmetric</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span> <span class="n">isposdef</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span> <span class="n">maxiter</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[20]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>([3.378375565730854e-5, 2.0710008290004846e-6, 3.663160494081563e-6, 7.527477309596129e-7, 8.63326175148559e-7, 1.7694050004451021e-6, 2.431230085065255e-7, 6.368398928398891e-7, 4.7449719187525534e-7, 2.6895483443481086e-7  …  3.1679174389517645e-6, 9.72731264250764e-7, 6.588685596562533e-7, 7.736991169983615e-7, 2.431230085065255e-7, 1.6219392163585108e-6, 3.912137945773289e-7, 2.431230085065255e-7, 7.296031020719451e-6, 6.330963730931431e-7], ConvergenceInfo: no converged values after 1 iterations and 31 applications of the linear map;
+norms of residuals are given by (2.563520017593024e-8,).
+)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[21]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># output is complex eigenvalue/eigenvector</span>
 <span class="p">(</span><span class="n">x_gmres</span><span class="p">,</span> <span class="n">info</span><span class="p">),</span> <span class="n">time_gmres</span><span class="p">,</span> <span class="o">=</span> <span class="nd">@timed</span> <span class="n">linsolve</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">issymmetric</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span> <span class="n">isposdef</span> <span class="o">=</span> <span class="kc">false</span><span class="p">)</span>
 </pre></div>
 
     </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[21]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>(([3.378342822183504e-5, 2.071015539245162e-6, 3.663065985231259e-6, 7.527510785590286e-7, 8.63328599714724e-7, 1.7694182527349206e-6, 2.4312303829080455e-7, 6.36841718073685e-7, 4.7449737037420244e-7, 2.689548611092025e-7  …  3.1679469739726655e-6, 9.726880410215637e-7, 6.588614478531613e-7, 7.737011774702039e-7, 2.4312303829080455e-7, 1.6219204214220026e-6, 3.912130060624972e-7, 2.4312303829080455e-7, 7.29603383131291e-6, 6.330939996667897e-7], ConvergenceInfo: one converged value after 3 iterations and 72 applications of the linear map;
+norms of residuals are given by (7.821171057225167e-13,).
+), 4.893589299, 1010851097, 0.158265197, Base.GC_Diff(1010851097, 137, 0, 123784, 6, 0, 158265197, 4, 0))</pre>
+</div>
+
+</div>
+
 </div>
 </div>
 
@@ -13480,7 +14368,7 @@ for stationary distribution $\mathbf{x}$.</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[22]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="nd">@assert</span> <span class="n">norm</span><span class="p">(</span><span class="n">x_gmres</span> <span class="o">-</span> <span class="n">xsol</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-8</span>
@@ -13501,13 +14389,33 @@ for stationary distribution $\mathbf{x}$.</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[23]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">clamp</span><span class="p">(</span><span class="mi">20</span> <span class="o">/</span> <span class="n">time_gmres</span> <span class="o">*</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
 </pre></div>
 
     </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[23]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>20.0</pre>
+</div>
+
+</div>
+
 </div>
 </div>
 
@@ -13530,7 +14438,7 @@ for stationary distribution $\mathbf{x}$.</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[24]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># warm up (compilation)</span>
@@ -13540,6 +14448,28 @@ for stationary distribution $\mathbf{x}$.</p>
 </pre></div>
 
     </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[24]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>((Complex{Float64}[-4.51831843083042e-15 + 0.0im], Array{Complex{Float64},1}[[0.0056358269538073135 + 0.0im, 0.00034549143807828867 + 0.0im, 0.000611080849412517 + 0.0im, 0.00012557561626035086 + 0.0im, 0.00014402240532803155 + 0.0im, 0.00029517830503984565 + 0.0im, 4.0558328286778296e-5 + 0.0im, 0.00010623935784851998 + 0.0im, 7.915671116195223e-5 + 0.0im, 4.486765066724855e-5 + 0.0im  …  0.0005284839899797004 + 0.0im, 0.00016226599147988716 + 0.0im, 0.00010991273837609647 + 0.0im, 0.00012907055855751584 + 0.0im, 4.0558328286778296e-5 + 0.0im, 0.00027057238743203937 + 0.0im, 6.526302748333306e-5 + 0.0im, 4.0558328286778296e-5 + 0.0im, 0.0012171406601327998 + 0.0im, 0.0001056141551069903 + 0.0im]], ConvergenceInfo: one converged value after 7 iterations and 99 applications of the linear map;
+norms of residuals are given by (9.575962515146957e-14,).
+), 9.648659201, 1584017541, 0.1799063, Base.GC_Diff(1584017541, 213, 0, 139424, 51, 0, 179906300, 4, 0))</pre>
+</div>
+
+</div>
+
 </div>
 </div>
 
@@ -13554,7 +14484,7 @@ for stationary distribution $\mathbf{x}$.</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[25]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="nd">@assert</span> <span class="n">abs</span><span class="p">(</span><span class="kt">Real</span><span class="p">(</span><span class="n">vals</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span> <span class="o">&lt;</span> <span class="mf">1e-8</span>
@@ -13567,7 +14497,7 @@ for stationary distribution $\mathbf{x}$.</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[32]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">x_arnoldi</span>   <span class="o">=</span> <span class="n">abs</span><span class="o">.</span><span class="p">(</span><span class="kt">Real</span><span class="o">.</span><span class="p">(</span><span class="n">vecs</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
@@ -13590,13 +14520,33 @@ for stationary distribution $\mathbf{x}$.</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[27]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">clamp</span><span class="p">(</span><span class="mi">20</span> <span class="o">/</span> <span class="n">time_arnoldi</span> <span class="o">*</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
 </pre></div>
 
     </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[27]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>20.0</pre>
+</div>
+
+</div>
+
 </div>
 </div>
 
@@ -13613,9 +14563,89 @@ for stationary distribution $\mathbf{x}$.</p>
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Q6.-(5-pts)-Results">Q6. (5 pts) Results<a class="anchor-link" href="#Q6.-(5-pts)-Results">&#182;</a></h2><p>List the top 20 pages you found and their corresponding PageRank score. Do they match the top 20 pages ranked according to in-degrees?</p>
+<p><strong>Solution:</strong> 
+The rank number is extracted by using<code>sortperm</code> and find the corresponding row number for rank smaller than 20 (top20), which is shown below and different from both in-degrees and out-degrees. Only 2~3 website index occur in all these list.</p>
 
 </div>
 </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[51]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="n">orderI</span> <span class="o">=</span> <span class="n">sortperm</span><span class="p">(</span><span class="n">x_arnoldi</span><span class="p">)</span>
+<span class="nd">@show</span> <span class="n">findall</span><span class="p">(</span><span class="n">x</span><span class="o">-&gt;</span><span class="n">x</span><span class="o">&lt;=</span><span class="mi">20</span><span class="p">,</span> <span class="n">orderI</span><span class="p">)</span> 
+<span class="nd">@show</span> <span class="n">findall</span><span class="p">(</span><span class="n">x</span><span class="o">-&gt;</span><span class="n">x</span><span class="o">&lt;=</span><span class="mi">20</span><span class="p">,</span> <span class="n">rankInD</span><span class="p">)</span>
+<span class="nd">@show</span> <span class="n">findall</span><span class="p">(</span><span class="n">x</span><span class="o">-&gt;</span><span class="n">x</span><span class="o">&lt;=</span><span class="mi">20</span><span class="p">,</span> <span class="n">rankOutD</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>findall((x-&gt;begin
+            #= In[51]:2 =#
+            x &lt;= 20
+        end), orderI) = [1, 2, 3, 249292, 295651, 311132, 313180, 413532, 527221, 530130, 618065, 656417, 661692, 692881, 768969, 816429, 836458, 871154, 878833, 914688]
+findall((x-&gt;begin
+            #= In[51]:3 =#
+            x &lt;= 20
+        end), rankInD) = [1, 2, 3, 201884, 201885, 201886, 201887, 201888, 201889, 201890, 488779, 603321, 603322, 698817, 726686, 830133, 844453, 844454, 901699, 915320]
+findall((x-&gt;begin
+            #= In[51]:4 =#
+            x &lt;= 20
+        end), rankOutD) = [1, 2, 176975, 176976, 304912, 400165, 400166, 466141, 466142, 607465, 607466, 607467, 715809, 744905, 744906, 744907, 844414, 857484, 869262, 891799]
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[51]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>20-element Array{Int64,1}:
+      1
+      2
+ 176975
+ 176976
+ 304912
+ 400165
+ 400166
+ 466141
+ 466142
+ 607465
+ 607466
+ 607467
+ 715809
+ 744905
+ 744906
+ 744907
+ 844414
+ 857484
+ 869262
+ 891799</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
