@@ -1,6 +1,6 @@
 *Burson Tang*
 
-### Overall Grade: 119/125
+### Overall Grade: 116/125
 
 ### Quality of report: 8/10
 
@@ -21,7 +21,7 @@
     - Yes.
 
 
-### Correctness and efficiency of solution: 96/100
+### Correctness and efficiency of solution: 93/100
 
 * Q1 (4/5 pts)
 
@@ -35,7 +35,9 @@
 
 * Q5
 
-    * Step 1 (15/15 pts)
+    * Step 1 (12/15 pts)
+
+        - `pgrksol.csv` in repository. Instructions specifically asked to **not** do this. `(-3 pts)`
 
     * Step 2 (20/20 pts)
 
