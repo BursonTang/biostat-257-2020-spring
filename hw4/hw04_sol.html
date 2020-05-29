@@ -2,7 +2,7 @@
 <html>
 <head><meta charset="utf-8" />
 
-<title>hw04</title>
+<title>hw04_sol</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
@@ -13070,28 +13070,6 @@ div#notebook {
     });
     </script>
     <!-- End of mathjax configuration --></head>
-
- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.css">
-
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
-
-<link rel="stylesheet" type="text/css" href="https://rawgit.com/ipython-contrib/jupyter_contrib_nbextensions/master/src/jupyter_contrib_nbextensions/nbextensions/toc2/main.css">
-
-<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
-<script src="https://rawgit.com/ipython-contrib/jupyter_contrib_nbextensions/master/src/jupyter_contrib_nbextensions/nbextensions/toc2/toc2.js"></script>
-
-<script>
-$( document ).ready(function(){
-
-            var cfg = {"colors": {"hover_highlight": "#DAA520", "running_highlight": "#FF0000", "selected_highlight": "#FFD700"}, "moveMenuLeft": true, "nav_menu": {"height": "87px", "width": "252px"}, "navigate_menu": true, "number_sections": true, "sideBar": true, "skip_h1_title": true, "threshold": 4, "toc_cell": false, "toc_section_display": "block", "toc_window_display": false, "widenNotebook": false};
-
-            // fire the main function with these parameters
-            require(['nbextensions/toc2/toc2'], function (toc2) {
-                toc2.table_of_contents(cfg);
-            });
-    });
-</script>
 <body>
   <div tabindex="-1" id="notebook" class="border-box-sizing">
     <div class="container" id="notebook-container">
@@ -13106,13 +13084,38 @@ $( document ).ready(function(){
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">versioninfo</span><span class="p">()</span>
 </pre></div>
 
     </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Julia Version 1.4.1
+Commit 381693d3df* (2020-04-14 17:20 UTC)
+Platform Info:
+  OS: Windows (x86_64-w64-mingw32)
+  CPU: Intel(R) Core(TM) i7-8750H CPU @ 2.20GHz
+  WORD_SIZE: 64
+  LIBM: libopenlibm
+  LLVM: libLLVM-8.0.1 (ORCJIT, skylake)
+</pre>
+</div>
+</div>
+
 </div>
 </div>
 
@@ -13135,13 +13138,14 @@ where</p>
 </ul>
 <p>The log-likelihood of the $i$-th datum $(\mathbf{y}_i, \mathbf{X}_i, \mathbf{Z}_i)$ is 
 $$
-    \ell_i(\boldsymbol{\beta}, \mathbf{L}, \sigma_0^2) = - \frac{n_i}{2} \log (2\pi) - \frac{1}{2} \log \det \boldsymbol{\Omega}_i - \frac{1}{2} (\mathbf{y} - \mathbf{X}_i \boldsymbol{\beta})^T \boldsymbol{\Omega}_i^{-1} (\mathbf{y} - \mathbf{X}_i \boldsymbol{\beta}),
+    \ell_i(\boldsymbol{\beta}, \mathbf{L}, \sigma^2) = - \frac{n_i}{2} \log (2\pi) - \frac{1}{2} \log \det \boldsymbol{\Omega}_i - \frac{1}{2} (\mathbf{y} - \mathbf{X}_i \boldsymbol{\beta})^T \boldsymbol{\Omega}_i^{-1} (\mathbf{y} - \mathbf{X}_i \boldsymbol{\beta}),
 $$
 where
 $$
     \boldsymbol{\Omega}_i = \sigma^2 \mathbf{I}_{n_i} + \mathbf{Z}_i \boldsymbol{\Sigma} \mathbf{Z}_i^T = \sigma^2 \mathbf{I}_{n_i} + \mathbf{Z}_i \mathbf{L} \mathbf{L}^T \mathbf{Z}_i^T,
 $$
 Because the variance component parameter $\boldsymbol{\Sigma}$ has to be positive semidefinite. We use its Cholesky factor $\mathbf{L}$ as optimization variable.</p>
+<p><strong>Notes:</strong> it is not convex. The second term "log function" is concave and "-log" is convex in $\Sigma$ and $\sigma^2$. Similarly, the third term is concave in these two variable. And thus this problem is either concave or convex.</p>
 <p>Given $m$ independent data points $(\mathbf{y}_i, \mathbf{X}_i, \mathbf{Z}_i)$, $i=1,\ldots,m$, we seek the maximum likelihood estimate (MLE) by maximizing the log-likelihood
 $$
 \ell(\boldsymbol{\beta}, \boldsymbol{\Sigma}, \sigma_0^2) = \sum_{i=1}^m \ell_i(\boldsymbol{\beta}, \boldsymbol{\Sigma}, \sigma_0^2).
@@ -13153,7 +13157,7 @@ In this assignment, we use the nonlinear programming (NLP) approach for optimiza
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># load necessary packages; make sure install them first</span>
@@ -13175,7 +13179,7 @@ In this assignment, we use the nonlinear programming (NLP) approach for optimiza
 <li><p>Prove that the gradient of $\ell_i$ is
 \begin{eqnarray*}
 \nabla_{\boldsymbol{\beta}} \ell_i(\boldsymbol{\beta}, \mathbf{L}, \sigma_0^2) &amp;=&amp; \mathbf{X}_i^T \boldsymbol{\Omega}_i^{-1} \mathbf{r}_i, \\
-\nabla_{\sigma_0^2} \ell_i(\boldsymbol{\beta}, \mathbf{L}, \sigma_0^2) &amp;=&amp; - \frac{1}{2} \operatorname{tr} (\boldsymbol{\Omega}_i^{-1}) + \frac{1}{2} \operatorname{tr}(\mathbf{r}_i^T \boldsymbol{\Omega}_i^{-2} \mathbf{r}_i), \\
+\nabla_{\sigma_0^2} \ell_i(\boldsymbol{\beta}, \mathbf{L}, \sigma_0^2) &amp;=&amp; - \frac{1}{2} \operatorname{tr} (\boldsymbol{\Omega}_i^{-1}) + \frac{1}{2} \mathbf{r}_i^T \boldsymbol{\Omega}_i^{-2} \mathbf{r}_i, \\
 \frac{\partial}{\partial \mathbf{L}} \ell_i(\boldsymbol{\beta}, \mathbf{L}, \sigma_0^2) &amp;=&amp; - \mathbf{Z}_i^T \boldsymbol{\Omega}_i^{-1} \mathbf{Z}_i \mathbf{L} + \mathbf{Z}_i^T \boldsymbol{\Omega}_i^{-1} \mathbf{r}_i \mathbf{r}_i^T \boldsymbol{\Omega}_i^{-1} \mathbf{Z}_i \mathbf{L},
 \end{eqnarray*}
 where $\mathbf{r}_i = \mathbf{y}_i - \mathbf{X}_i \boldsymbol{\beta}$.</p>
@@ -13196,12 +13200,19 @@ where $\mathbf{r}_i = \mathbf{y}_i - \mathbf{X}_i \boldsymbol{\beta}$.</p>
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+$$ \|A\|_p = \left( \sum_{i=1}^n | a_i | ^p \right)^{1/p} $$
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># define a type that holds an LMM datum</span>
+<div class=" highlight hl-julia"><pre><span></span><span class="c">## define a type that holds an LMM datum</span>
 <span class="k">struct</span> <span class="n">LmmObs</span><span class="p">{</span><span class="n">T</span> <span class="o">&lt;:</span> <span class="kt">AbstractFloat</span><span class="p">}</span>
     <span class="c"># data</span>
     <span class="n">y</span>          <span class="o">::</span> <span class="kt">Vector</span><span class="p">{</span><span class="n">T</span><span class="p">}</span>
@@ -13211,17 +13222,29 @@ where $\mathbf{r}_i = \mathbf{y}_i - \mathbf{X}_i \boldsymbol{\beta}$.</p>
     <span class="n">∇β</span>         <span class="o">::</span> <span class="kt">Vector</span><span class="p">{</span><span class="n">T</span><span class="p">}</span>
     <span class="n">∇σ²</span>        <span class="o">::</span> <span class="kt">Vector</span><span class="p">{</span><span class="n">T</span><span class="p">}</span>
     <span class="n">∇Σ</span>         <span class="o">::</span> <span class="kt">Matrix</span><span class="p">{</span><span class="n">T</span><span class="p">}</span>    
-    <span class="c"># working arrays</span>
+    <span class="c"># working arraysm</span>
     <span class="c"># TODO: whatever intermediate arrays you may want to pre-allocate</span>
     <span class="n">yty</span>        <span class="o">::</span> <span class="n">T</span>
     <span class="n">xty</span>        <span class="o">::</span> <span class="kt">Vector</span><span class="p">{</span><span class="n">T</span><span class="p">}</span>
     <span class="n">zty</span>        <span class="o">::</span> <span class="kt">Vector</span><span class="p">{</span><span class="n">T</span><span class="p">}</span>
+    <span class="n">ztr</span>        <span class="o">::</span> <span class="kt">Vector</span><span class="p">{</span><span class="n">T</span><span class="p">}</span> <span class="c">#new</span>
+    <span class="n">rtr</span>        <span class="o">::</span> <span class="kt">Vector</span><span class="p">{</span><span class="n">T</span><span class="p">}</span> <span class="c">#new</span>
     <span class="n">storage_p</span>  <span class="o">::</span> <span class="kt">Vector</span><span class="p">{</span><span class="n">T</span><span class="p">}</span>
     <span class="n">storage_q</span>  <span class="o">::</span> <span class="kt">Vector</span><span class="p">{</span><span class="n">T</span><span class="p">}</span>
+    <span class="n">qsol</span>       <span class="o">::</span> <span class="kt">Vector</span><span class="p">{</span><span class="n">T</span><span class="p">}</span> <span class="c">#new</span>
+    <span class="n">storage_q2</span> <span class="o">::</span> <span class="kt">Vector</span><span class="p">{</span><span class="n">T</span><span class="p">}</span> <span class="c">#new</span>
+    <span class="n">storage_q3</span> <span class="o">::</span> <span class="kt">Vector</span><span class="p">{</span><span class="n">T</span><span class="p">}</span> <span class="c">#new</span>
+    <span class="n">storage_xtr</span><span class="o">::</span> <span class="kt">Vector</span><span class="p">{</span><span class="n">T</span><span class="p">}</span> <span class="c">#new</span>
     <span class="n">xtx</span>        <span class="o">::</span> <span class="kt">Matrix</span><span class="p">{</span><span class="n">T</span><span class="p">}</span>
-    <span class="n">ztx</span>        <span class="o">::</span> <span class="kt">Matrix</span><span class="p">{</span><span class="n">T</span><span class="p">}</span>
+    <span class="n">ztx</span>        <span class="o">::</span> <span class="kt">Matrix</span><span class="p">{</span><span class="n">T</span><span class="p">}</span> <span class="c">#new</span>
+    <span class="n">xtz</span>        <span class="o">::</span> <span class="kt">Matrix</span><span class="p">{</span><span class="n">T</span><span class="p">}</span>
     <span class="n">ztz</span>        <span class="o">::</span> <span class="kt">Matrix</span><span class="p">{</span><span class="n">T</span><span class="p">}</span>
     <span class="n">storage_qq</span> <span class="o">::</span> <span class="kt">Matrix</span><span class="p">{</span><span class="n">T</span><span class="p">}</span>
+    <span class="n">storage_qq2</span><span class="o">::</span> <span class="kt">Matrix</span><span class="p">{</span><span class="n">T</span><span class="p">}</span> <span class="c">#new</span>
+    <span class="n">qqlztzl</span>    <span class="o">::</span> <span class="kt">Matrix</span><span class="p">{</span><span class="n">T</span><span class="p">}</span> <span class="c">#new</span>
+    <span class="n">storage_pq</span> <span class="o">::</span> <span class="kt">Matrix</span><span class="p">{</span><span class="n">T</span><span class="p">}</span> <span class="c">#new</span>
+    <span class="n">lztz</span>       <span class="o">::</span> <span class="kt">Matrix</span><span class="p">{</span><span class="n">T</span><span class="p">}</span> <span class="c">#new</span>
+    <span class="n">lztzl</span>      <span class="o">::</span> <span class="kt">Matrix</span><span class="p">{</span><span class="n">T</span><span class="p">}</span> <span class="c">#new</span>
 <span class="k">end</span>
 
 <span class="s">&quot;&quot;&quot;</span>
@@ -13240,16 +13263,29 @@ where $\mathbf{r}_i = \mathbf{y}_i - \mathbf{X}_i \boldsymbol{\beta}$.</p>
     <span class="n">∇Σ</span>         <span class="o">=</span> <span class="kt">Matrix</span><span class="p">{</span><span class="n">T</span><span class="p">}(</span><span class="n">undef</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">q</span><span class="p">)</span>    
     <span class="n">yty</span>        <span class="o">=</span> <span class="n">abs2</span><span class="p">(</span><span class="n">norm</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
     <span class="n">xty</span>        <span class="o">=</span> <span class="n">transpose</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">*</span> <span class="n">y</span>
-    <span class="n">zty</span>        <span class="o">=</span> <span class="n">transpose</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span> <span class="o">*</span> <span class="n">y</span>    
+    <span class="n">zty</span>        <span class="o">=</span> <span class="n">transpose</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span> <span class="o">*</span> <span class="n">y</span>
+    <span class="n">ztr</span>        <span class="o">=</span> <span class="n">similar</span><span class="p">(</span><span class="n">zty</span><span class="p">)</span>  <span class="c">#new</span>
+    <span class="n">rtr</span>        <span class="o">=</span> <span class="kt">Vector</span><span class="p">{</span><span class="n">T</span><span class="p">}(</span><span class="n">undef</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
     <span class="n">storage_p</span>  <span class="o">=</span> <span class="kt">Vector</span><span class="p">{</span><span class="n">T</span><span class="p">}(</span><span class="n">undef</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
     <span class="n">storage_q</span>  <span class="o">=</span> <span class="kt">Vector</span><span class="p">{</span><span class="n">T</span><span class="p">}(</span><span class="n">undef</span><span class="p">,</span> <span class="n">q</span><span class="p">)</span>
+    <span class="n">qsol</span>      <span class="o">=</span> <span class="n">similar</span><span class="p">(</span><span class="n">storage_q</span><span class="p">)</span> <span class="c">#new</span>
+    <span class="n">storage_q2</span> <span class="o">=</span> <span class="n">similar</span><span class="p">(</span><span class="n">storage_q</span><span class="p">)</span> <span class="c">#new</span>
+    <span class="n">storage_q3</span> <span class="o">=</span> <span class="n">similar</span><span class="p">(</span><span class="n">storage_q</span><span class="p">)</span> <span class="c">#new</span>
+    <span class="n">storage_xtr</span> <span class="o">=</span> <span class="kt">Vector</span><span class="p">{</span><span class="n">T</span><span class="p">}(</span><span class="n">undef</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span> <span class="c">#new, no need?</span>
     <span class="n">xtx</span>        <span class="o">=</span> <span class="n">transpose</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">*</span> <span class="n">X</span>
     <span class="n">ztx</span>        <span class="o">=</span> <span class="n">transpose</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span> <span class="o">*</span> <span class="n">X</span>
+    <span class="n">xtz</span>        <span class="o">=</span> <span class="n">transpose</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">*</span> <span class="n">Z</span> <span class="c">#new</span>
     <span class="n">ztz</span>        <span class="o">=</span> <span class="n">transpose</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span> <span class="o">*</span> <span class="n">Z</span>
     <span class="n">storage_qq</span> <span class="o">=</span> <span class="n">similar</span><span class="p">(</span><span class="n">ztz</span><span class="p">)</span>
+    <span class="n">storage_qq2</span><span class="o">=</span> <span class="n">similar</span><span class="p">(</span><span class="n">ztz</span><span class="p">)</span> <span class="c">#new</span>
+    <span class="n">qqlztzl</span>    <span class="o">=</span> <span class="n">similar</span><span class="p">(</span><span class="n">ztz</span><span class="p">)</span> <span class="c">#new</span>
+    <span class="n">storage_pq</span> <span class="o">=</span> <span class="n">similar</span><span class="p">(</span><span class="n">xtz</span><span class="p">)</span> <span class="c">#new</span>
+    <span class="n">lztz</span>       <span class="o">=</span> <span class="n">similar</span><span class="p">(</span><span class="n">ztz</span><span class="p">)</span> <span class="c">#new</span>
+    <span class="n">lztzl</span>      <span class="o">=</span> <span class="n">similar</span><span class="p">(</span><span class="n">ztz</span><span class="p">)</span> <span class="c">#new</span>
     <span class="n">LmmObs</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">∇β</span><span class="p">,</span> <span class="n">∇σ²</span><span class="p">,</span> <span class="n">∇Σ</span><span class="p">,</span> 
-        <span class="n">yty</span><span class="p">,</span> <span class="n">xty</span><span class="p">,</span> <span class="n">zty</span><span class="p">,</span> <span class="n">storage_p</span><span class="p">,</span> <span class="n">storage_q</span><span class="p">,</span> 
-        <span class="n">xtx</span><span class="p">,</span> <span class="n">ztx</span><span class="p">,</span> <span class="n">ztz</span><span class="p">,</span> <span class="n">storage_qq</span><span class="p">)</span>
+        <span class="n">yty</span><span class="p">,</span> <span class="n">xty</span><span class="p">,</span> <span class="n">zty</span><span class="p">,</span> <span class="n">ztr</span><span class="p">,</span> <span class="n">rtr</span><span class="p">,</span> <span class="n">storage_p</span><span class="p">,</span> <span class="n">storage_q</span><span class="p">,</span> <span class="n">qsol</span><span class="p">,</span> <span class="n">storage_q2</span><span class="p">,</span> 
+        <span class="n">storage_q3</span><span class="p">,</span> <span class="n">storage_xtr</span><span class="p">,</span> <span class="n">xtx</span><span class="p">,</span> <span class="n">ztx</span><span class="p">,</span> <span class="n">xtz</span><span class="p">,</span> <span class="n">ztz</span><span class="p">,</span> <span class="n">storage_qq</span><span class="p">,</span>
+        <span class="n">storage_qq2</span><span class="p">,</span> <span class="n">qqlztzl</span><span class="p">,</span> <span class="n">storage_pq</span><span class="p">,</span> <span class="n">lztz</span><span class="p">,</span> <span class="n">lztzl</span><span class="p">)</span>
 <span class="k">end</span>
 
 <span class="s">&quot;&quot;&quot;</span>
@@ -13273,34 +13309,108 @@ where $\mathbf{r}_i = \mathbf{y}_i - \mathbf{X}_i \boldsymbol{\beta}$.</p>
     <span class="c"># form the q-by-q matrix: M = σ² * I + Lt Zt Z L</span>
     <span class="n">copy!</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">storage_qq</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">ztz</span><span class="p">)</span>
     <span class="n">BLAS</span><span class="o">.</span><span class="n">trmm!</span><span class="p">(</span><span class="sc">&#39;L&#39;</span><span class="p">,</span> <span class="sc">&#39;L&#39;</span><span class="p">,</span> <span class="sc">&#39;T&#39;</span><span class="p">,</span> <span class="sc">&#39;N&#39;</span><span class="p">,</span> <span class="n">T</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">L</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">storage_qq</span><span class="p">)</span> <span class="c"># O(q^3)</span>
+    <span class="n">copy!</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">lztz</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">storage_qq</span><span class="p">)</span> <span class="c"># save lztz qq</span>
     <span class="n">BLAS</span><span class="o">.</span><span class="n">trmm!</span><span class="p">(</span><span class="sc">&#39;R&#39;</span><span class="p">,</span> <span class="sc">&#39;L&#39;</span><span class="p">,</span> <span class="sc">&#39;N&#39;</span><span class="p">,</span> <span class="sc">&#39;N&#39;</span><span class="p">,</span> <span class="n">T</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">L</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">storage_qq</span><span class="p">)</span> <span class="c"># O(q^3)</span>
+    <span class="n">copy!</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">lztzl</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">storage_qq</span><span class="p">)</span> <span class="c"># save (zl)tzl  ltztzl qq</span>
     <span class="nd">@inbounds</span> <span class="k">for</span> <span class="n">j</span> <span class="kp">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">q</span>
         <span class="n">obs</span><span class="o">.</span><span class="n">storage_qq</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">+=</span> <span class="n">σ²</span>
     <span class="k">end</span>
+    <span class="n">copy!</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">storage_qq2</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">storage_qq</span><span class="p">)</span>
     <span class="c"># cholesky on M = σ² * I + Lt Zt Z L</span>
     <span class="n">LAPACK</span><span class="o">.</span><span class="n">potrf!</span><span class="p">(</span><span class="sc">&#39;U&#39;</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">storage_qq</span><span class="p">)</span> <span class="c"># O(q^3)</span>
+    
     <span class="c"># storage_q = (Mchol.U&#39;) \ (Lt * (Zt * res))</span>
     <span class="n">BLAS</span><span class="o">.</span><span class="n">gemv!</span><span class="p">(</span><span class="sc">&#39;N&#39;</span><span class="p">,</span> <span class="n">T</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">obs</span><span class="o">.</span><span class="n">ztx</span><span class="p">,</span> <span class="n">β</span><span class="p">,</span> <span class="n">T</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">copy!</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">storage_q</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">zty</span><span class="p">))</span> <span class="c"># O(pq)</span>
-    <span class="n">BLAS</span><span class="o">.</span><span class="n">trmv!</span><span class="p">(</span><span class="sc">&#39;L&#39;</span><span class="p">,</span> <span class="sc">&#39;T&#39;</span><span class="p">,</span> <span class="sc">&#39;N&#39;</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">storage_q</span><span class="p">)</span>    <span class="c"># O(q^2)</span>
+    <span class="n">copy!</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">ztr</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">storage_q</span><span class="p">)</span> <span class="c"># store as ztr =  zty-ztxβ</span>
+    <span class="n">BLAS</span><span class="o">.</span><span class="n">trmv!</span><span class="p">(</span><span class="sc">&#39;L&#39;</span><span class="p">,</span> <span class="sc">&#39;T&#39;</span><span class="p">,</span> <span class="sc">&#39;N&#39;</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">storage_q</span><span class="p">)</span>    <span class="c"># O(q^2) (Lt * (Zt * res))</span>
+    
+    <span class="c">## calculate inv(qq)</span>
+    <span class="c"># qq2chol = cholesky!(Symmetric(obs.storage_qq3)) # not good since cholesky! needs memory allocation</span>
+    <span class="c"># instead, calculate  inverse for up triangular side</span>
+    <span class="n">LAPACK</span><span class="o">.</span><span class="n">potrf!</span><span class="p">(</span><span class="sc">&#39;U&#39;</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">storage_qq2</span><span class="p">)</span>
+    <span class="n">LAPACK</span><span class="o">.</span><span class="n">potri!</span><span class="p">(</span><span class="sc">&#39;U&#39;</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">storage_qq2</span><span class="p">)</span>
+    
+    <span class="c">## calculate and store (Mchol) \ (Lt * (Zt * res))</span>
+    <span class="c"># obs.qsol .= qq2chol\obs.storage_q #qq2, q2 free # solve needs memory allocation too</span>
+    <span class="c"># better solve, no memory allocation but calculate cholesky! requires memory allocation</span>
+    <span class="c"># ldiv!(qq2chol, copy!(obs.qsol, obs.storage_q)) </span>
+    
+    <span class="c"># LAPACK.potrf!(&#39;U&#39;, obs.storage_qq) # conversion already done</span>
+    <span class="n">BLAS</span><span class="o">.</span><span class="n">trsv!</span><span class="p">(</span><span class="sc">&#39;U&#39;</span><span class="p">,</span> <span class="sc">&#39;T&#39;</span><span class="p">,</span> <span class="sc">&#39;N&#39;</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">storage_qq</span><span class="p">,</span> <span class="n">copy!</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">qsol</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">storage_q</span><span class="p">))</span> 
+    <span class="n">BLAS</span><span class="o">.</span><span class="n">trsv!</span><span class="p">(</span><span class="sc">&#39;U&#39;</span><span class="p">,</span> <span class="sc">&#39;N&#39;</span><span class="p">,</span> <span class="sc">&#39;N&#39;</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">storage_qq</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">qsol</span><span class="p">)</span> 
+        
+    <span class="c"># solve half of the omega matrix, and calculate via abs2norm</span>
     <span class="n">BLAS</span><span class="o">.</span><span class="n">trsv!</span><span class="p">(</span><span class="sc">&#39;U&#39;</span><span class="p">,</span> <span class="sc">&#39;T&#39;</span><span class="p">,</span> <span class="sc">&#39;N&#39;</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">storage_qq</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">storage_q</span><span class="p">)</span> <span class="c"># O(q^3)</span>
+    
     <span class="c"># l2 norm of residual vector</span>
     <span class="n">copy!</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">storage_p</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">xty</span><span class="p">)</span>
-    <span class="n">rtr</span>  <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">yty</span> <span class="o">+</span>
+    <span class="n">obs</span><span class="o">.</span><span class="n">rtr</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">yty</span> <span class="o">+</span>
         <span class="n">dot</span><span class="p">(</span><span class="n">β</span><span class="p">,</span> <span class="n">BLAS</span><span class="o">.</span><span class="n">gemv!</span><span class="p">(</span><span class="sc">&#39;N&#39;</span><span class="p">,</span> <span class="n">T</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">obs</span><span class="o">.</span><span class="n">xtx</span><span class="p">,</span> <span class="n">β</span><span class="p">,</span> <span class="n">T</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">),</span> <span class="n">obs</span><span class="o">.</span><span class="n">storage_p</span><span class="p">))</span>
     <span class="c"># assemble pieces</span>
     <span class="n">logl</span><span class="o">::</span><span class="n">T</span> <span class="o">=</span> <span class="n">n</span> <span class="o">*</span> <span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="nb">π</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="n">q</span><span class="p">)</span> <span class="o">*</span> <span class="n">log</span><span class="p">(</span><span class="n">σ²</span><span class="p">)</span> <span class="c"># constant term</span>
     <span class="nd">@inbounds</span> <span class="k">for</span> <span class="n">j</span> <span class="kp">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">q</span>
         <span class="n">logl</span> <span class="o">+=</span> <span class="mi">2</span><span class="n">log</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">storage_qq</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">j</span><span class="p">])</span>
     <span class="k">end</span>
-    <span class="n">qf</span>    <span class="o">=</span> <span class="n">abs2</span><span class="p">(</span><span class="n">norm</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">storage_q</span><span class="p">))</span> <span class="c"># quadratic form term</span>
-    <span class="n">logl</span> <span class="o">+=</span> <span class="p">(</span><span class="n">rtr</span> <span class="o">-</span> <span class="n">qf</span><span class="p">)</span> <span class="o">/</span> <span class="n">σ²</span> 
+    <span class="n">qf</span>    <span class="o">=</span> <span class="n">abs2</span><span class="p">(</span><span class="n">norm</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">storage_q</span><span class="p">))</span> <span class="c"># quadratic form term  =&gt;??????  </span>
+    <span class="n">logl</span> <span class="o">+=</span> <span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">rtr</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">qf</span><span class="p">)</span> <span class="o">/</span> <span class="n">σ²</span> 
     <span class="n">logl</span> <span class="o">/=</span> <span class="o">-</span><span class="mi">2</span>
     <span class="c">###################</span>
     <span class="c"># Evaluate gradient</span>
     <span class="c">###################    </span>
     <span class="k">if</span> <span class="n">needgrad</span>
         <span class="c"># TODO: fill ∇β, ∇L, ∇σ² by gradients</span>
-        <span class="n">sleep</span><span class="p">(</span><span class="mf">1e-3</span><span class="p">)</span> <span class="c"># pretend this step takes 1ms</span>
+        <span class="c">##### ∇β  note: replace xtr with ∇β??</span>
+        <span class="c"># left term, xtr</span>
+        <span class="n">BLAS</span><span class="o">.</span><span class="n">gemv!</span><span class="p">(</span><span class="sc">&#39;N&#39;</span><span class="p">,</span> <span class="n">T</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">obs</span><span class="o">.</span><span class="n">xtx</span><span class="p">,</span> <span class="n">β</span><span class="p">,</span> <span class="n">T</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">copy!</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">∇β</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">xty</span><span class="p">))</span> 
+        <span class="c"># xtz * L</span>
+        <span class="n">BLAS</span><span class="o">.</span><span class="n">trmm!</span><span class="p">(</span><span class="sc">&#39;R&#39;</span><span class="p">,</span> <span class="sc">&#39;L&#39;</span><span class="p">,</span> <span class="sc">&#39;N&#39;</span><span class="p">,</span> <span class="sc">&#39;N&#39;</span><span class="p">,</span> <span class="n">T</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">L</span><span class="p">,</span> <span class="n">copy!</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">storage_pq</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">xtz</span><span class="p">))</span>
+        <span class="c"># qsol = (Mchol) \ (Lt * (Zt * res)); afore-calculated </span>
+        <span class="n">BLAS</span><span class="o">.</span><span class="n">gemv!</span><span class="p">(</span><span class="sc">&#39;N&#39;</span><span class="p">,</span> <span class="n">T</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">obs</span><span class="o">.</span><span class="n">storage_pq</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">qsol</span><span class="p">,</span> <span class="n">T</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">obs</span><span class="o">.</span><span class="n">∇β</span><span class="p">)</span> 
+        <span class="n">rdiv!</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">∇β</span><span class="p">,</span> <span class="n">σ²</span><span class="p">)</span>
+        
+        <span class="c">##### ∇σ² </span>
+        <span class="c"># Left term</span>
+        <span class="n">obs</span><span class="o">.</span><span class="n">∇σ²</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="o">=</span> <span class="n">n</span> <span class="c"># trace of identify matrix</span>
+        
+        <span class="c"># BLAS.trmm!(&#39;L&#39;, &#39;U&#39;, &#39;N&#39;, &#39;N&#39;, T(1), obs.storage_qq2, copy!(obs.qqlztzl, obs.lztzl))</span>
+        <span class="c"># not working. it uses only top half instead of copying top to bottom</span>
+        <span class="n">mul!</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">qqlztzl</span><span class="p">,</span> <span class="kt">Symmetric</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">storage_qq2</span><span class="p">),</span> <span class="n">obs</span><span class="o">.</span><span class="n">lztzl</span><span class="p">)</span>
+        <span class="c"># obs.qqlztzl .= qq2chol\obs.lztzl # lztz # dir solver cost memory</span>
+        
+        <span class="c"># trsv can only solve linear function, Ax=b, x=&gt;vector</span>
+        <span class="c"># BLAS.trsv!(&#39;U&#39;, &#39;T&#39;, &#39;N&#39;, obs.storage_qq, copy!(obs.qqlztzl, obs.lztzl)) </span>
+        <span class="c"># BLAS.trsv!(&#39;U&#39;, &#39;N&#39;, &#39;N&#39;, obs.storage_qq, obs.qqlztzl) </span>
+        
+        <span class="n">obs</span><span class="o">.</span><span class="n">∇σ²</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="o">-=</span> <span class="n">tr</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">qqlztzl</span><span class="p">)</span>
+        <span class="n">obs</span><span class="o">.</span><span class="n">∇σ²</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/=</span> <span class="o">-</span><span class="mi">2</span><span class="n">σ²</span> 
+        
+        <span class="c"># Right term</span>
+        <span class="c"># first two terms occur in loglikelihood cal</span>
+        <span class="n">obs</span><span class="o">.</span><span class="n">∇σ²</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">rtr</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">2</span><span class="n">qf</span><span class="p">)</span> <span class="o">./</span><span class="p">(</span><span class="mi">2</span><span class="n">σ²</span><span class="o">^</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">mul!</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">storage_q2</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">qqlztzl</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">qsol</span><span class="p">)</span>
+        <span class="n">lmul!</span><span class="p">(</span><span class="kt">LowerTriangular</span><span class="p">(</span><span class="n">L</span><span class="p">),</span> <span class="n">obs</span><span class="o">.</span><span class="n">storage_q2</span><span class="p">)</span>
+        <span class="n">obs</span><span class="o">.</span><span class="n">∇σ²</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">dot</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">ztr</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">storage_q2</span><span class="p">)</span><span class="o">./</span> <span class="mi">2</span><span class="n">σ²</span><span class="o">^</span><span class="mi">2</span>
+        
+        
+        <span class="c">##### ∇L</span>
+        <span class="c"># left term</span>
+        <span class="c"># obs.storage_qq2 = inv(M), only top half is inversed</span>
+        <span class="n">mul!</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">qqlztzl</span><span class="p">,</span> <span class="kt">Symmetric</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">storage_qq2</span><span class="p">),</span> <span class="n">obs</span><span class="o">.</span><span class="n">lztz</span><span class="p">)</span>
+
+        <span class="n">BLAS</span><span class="o">.</span><span class="n">trmm!</span><span class="p">(</span><span class="sc">&#39;L&#39;</span><span class="p">,</span> <span class="sc">&#39;L&#39;</span><span class="p">,</span> <span class="sc">&#39;N&#39;</span><span class="p">,</span> <span class="sc">&#39;N&#39;</span><span class="p">,</span> <span class="n">T</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">L</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">qqlztzl</span><span class="p">)</span>
+        <span class="n">mul!</span><span class="p">(</span><span class="n">copy!</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">∇Σ</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">ztz</span><span class="p">),</span> <span class="n">obs</span><span class="o">.</span><span class="n">ztz</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">qqlztzl</span><span class="p">,</span> <span class="n">T</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">T</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">rdiv!</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">∇Σ</span><span class="p">,</span> <span class="n">σ²</span><span class="p">)</span>
+        
+        <span class="c"># Right term1</span>
+        <span class="n">lmul!</span><span class="p">(</span><span class="kt">LowerTriangular</span><span class="p">(</span><span class="n">L</span><span class="p">),</span> <span class="n">copy!</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">storage_q2</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">qsol</span><span class="p">))</span>
+        
+        <span class="c"># obs.storage_q3 = obs.storage_q3 - ztz * obs.storage_q2</span>
+        <span class="n">BLAS</span><span class="o">.</span><span class="n">gemv!</span><span class="p">(</span><span class="sc">&#39;N&#39;</span><span class="p">,</span> <span class="n">T</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">obs</span><span class="o">.</span><span class="n">ztz</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">storage_q2</span><span class="p">,</span> <span class="n">T</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">copy!</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">storage_q3</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">ztr</span><span class="p">))</span>  
+        <span class="c"># q2free</span>
+        
+        <span class="c"># Right term2 is the transpose of the term1</span>
+        <span class="n">BLAS</span><span class="o">.</span><span class="n">ger!</span><span class="p">((</span><span class="n">σ²</span><span class="o">^</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)),</span> <span class="n">obs</span><span class="o">.</span><span class="n">storage_q3</span><span class="p">,</span> <span class="n">copy!</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">storage_q2</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">storage_q3</span><span class="p">),</span> <span class="n">obs</span><span class="o">.</span><span class="n">∇Σ</span><span class="p">)</span>
+        
     <span class="k">end</span>    
     <span class="c">###################</span>
     <span class="c"># Return</span>
@@ -13310,6 +13420,26 @@ where $\mathbf{r}_i = \mathbf{y}_i - \mathbf{X}_i \boldsymbol{\beta}$.</p>
 </pre></div>
 
     </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[2]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>logl!</pre>
+</div>
+
+</div>
+
 </div>
 </div>
 
@@ -13324,7 +13454,7 @@ where $\mathbf{r}_i = \mathbf{y}_i - \mathbf{X}_i \boldsymbol{\beta}$.</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">Random</span><span class="o">.</span><span class="n">seed!</span><span class="p">(</span><span class="mi">257</span><span class="p">)</span>
@@ -13339,7 +13469,7 @@ where $\mathbf{r}_i = \mathbf{y}_i - \mathbf{X}_i \boldsymbol{\beta}$.</p>
 <span class="n">Σ</span>  <span class="o">=</span> <span class="n">fill</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">q</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.9</span><span class="nb">I</span> <span class="c"># compound symmetry </span>
 <span class="n">L</span>  <span class="o">=</span> <span class="kt">Matrix</span><span class="p">(</span><span class="n">cholesky</span><span class="p">(</span><span class="kt">Symmetric</span><span class="p">(</span><span class="n">Σ</span><span class="p">))</span><span class="o">.</span><span class="n">L</span><span class="p">)</span>
 <span class="c"># generate y</span>
-<span class="n">y</span>  <span class="o">=</span> <span class="n">X</span> <span class="o">*</span> <span class="n">β</span> <span class="o">+</span> <span class="n">Z</span> <span class="o">*</span> <span class="n">rand</span><span class="p">(</span><span class="n">MvNormal</span><span class="p">(</span><span class="n">Σ</span><span class="p">))</span> <span class="o">+</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">σ²</span><span class="p">)</span> <span class="o">*</span> <span class="n">randn</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="n">y</span>  <span class="o">=</span> <span class="n">X</span> <span class="o">*</span> <span class="n">β</span> <span class="o">+</span> <span class="n">Z</span> <span class="o">*</span> <span class="n">rand</span><span class="p">(</span><span class="n">MvNormal</span><span class="p">(</span><span class="n">Σ</span><span class="p">))</span> <span class="o">+</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">σ²</span><span class="p">)</span> <span class="o">*</span> <span class="n">randn</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
 
 <span class="c"># form the LmmObs object</span>
 <span class="n">obs</span> <span class="o">=</span> <span class="n">LmmObs</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Z</span><span class="p">);</span>
@@ -13359,16 +13489,79 @@ where $\mathbf{r}_i = \mathbf{y}_i - \mathbf{X}_i \boldsymbol{\beta}$.</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="nd">@show</span> <span class="n">logl</span> <span class="o">=</span> <span class="n">logl!</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">β</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">σ²</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span>
-<span class="nd">@show</span> <span class="n">obs</span><span class="o">.</span><span class="n">∇β</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>logl = logl!(obs, β, L, σ², true) = -3247.4568580638247
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[4]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>-3247.4568580638247</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="nd">@show</span> <span class="n">obs</span><span class="o">.</span><span class="n">∇β</span>
 <span class="nd">@show</span> <span class="n">obs</span><span class="o">.</span><span class="n">∇σ²</span>
 <span class="nd">@show</span> <span class="n">obs</span><span class="o">.</span><span class="n">∇Σ</span><span class="p">;</span>
 </pre></div>
 
     </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>obs.∇β = [-1.630984323271523, -77.52751558041858, -14.702372116010567, 6.978485518989582, -57.711823176822215]
+obs.∇σ² = [-4.820377758258928]
+obs.∇Σ = [1.6423791649310306 1.8250240772241428 0.061276500433454985; 1.8250240772241395 0.11072391370504575 0.07213050869980281; 0.06127650043343602 0.07213050869979333 -1.0173748515298469]
+</pre>
+</div>
+</div>
+
 </div>
 </div>
 
@@ -13383,7 +13576,7 @@ where $\mathbf{r}_i = \mathbf{y}_i - \mathbf{X}_i \boldsymbol{\beta}$.</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="nd">@assert</span> <span class="n">abs</span><span class="p">(</span><span class="n">logl</span> <span class="o">-</span> <span class="p">(</span><span class="o">-</span><span class="mf">3247.4568580638247</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mf">1e-8</span>
@@ -13417,13 +13610,43 @@ where $\mathbf{r}_i = \mathbf{y}_i - \mathbf{X}_i \boldsymbol{\beta}$.</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="nd">@benchmark</span> <span class="n">logl!</span><span class="p">(</span><span class="o">$</span><span class="n">obs</span><span class="p">,</span> <span class="o">$</span><span class="n">β</span><span class="p">,</span> <span class="o">$</span><span class="n">L</span><span class="p">,</span> <span class="o">$</span><span class="n">σ²</span><span class="p">,</span> <span class="kc">false</span><span class="p">)</span>
 </pre></div>
 
     </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[8]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>BenchmarkTools.Trial: 
+  memory estimate:  0 bytes
+  allocs estimate:  0
+  --------------
+  minimum time:     1.170 μs (0.00% GC)
+  median time:      1.220 μs (0.00% GC)
+  mean time:        1.302 μs (0.00% GC)
+  maximum time:     7.540 μs (0.00% GC)
+  --------------
+  samples:          10000
+  evals/sample:     10</pre>
+</div>
+
+</div>
+
 </div>
 </div>
 
@@ -13438,13 +13661,43 @@ where $\mathbf{r}_i = \mathbf{y}_i - \mathbf{X}_i \boldsymbol{\beta}$.</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">bm_objgrad</span> <span class="o">=</span> <span class="nd">@benchmark</span> <span class="n">logl!</span><span class="p">(</span><span class="o">$</span><span class="n">obs</span><span class="p">,</span> <span class="o">$</span><span class="n">β</span><span class="p">,</span> <span class="o">$</span><span class="n">L</span><span class="p">,</span> <span class="o">$</span><span class="n">σ²</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span>
 </pre></div>
 
     </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[9]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>BenchmarkTools.Trial: 
+  memory estimate:  0 bytes
+  allocs estimate:  0
+  --------------
+  minimum time:     2.311 μs (0.00% GC)
+  median time:      2.411 μs (0.00% GC)
+  mean time:        2.658 μs (0.00% GC)
+  maximum time:     13.456 μs (0.00% GC)
+  --------------
+  samples:          10000
+  evals/sample:     9</pre>
+</div>
+
+</div>
+
 </div>
 </div>
 
@@ -13459,7 +13712,7 @@ where $\mathbf{r}_i = \mathbf{y}_i - \mathbf{X}_i \boldsymbol{\beta}$.</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c">#  The points you will get are</span>
@@ -13467,6 +13720,26 @@ where $\mathbf{r}_i = \mathbf{y}_i - \mathbf{X}_i \boldsymbol{\beta}$.</p>
 </pre></div>
 
     </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[10]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>10.0</pre>
+</div>
+
+</div>
+
 </div>
 </div>
 
@@ -13512,7 +13785,7 @@ where $\mathbf{r}_i = \mathbf{y}_i - \mathbf{X}_i \boldsymbol{\beta}$.</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># define a type that holds LMM model (data + parameters)</span>
@@ -13528,6 +13801,7 @@ where $\mathbf{r}_i = \mathbf{y}_i - \mathbf{X}_i \boldsymbol{\beta}$.</p>
     <span class="n">∇σ²</span>  <span class="o">::</span> <span class="kt">Vector</span><span class="p">{</span><span class="n">T</span><span class="p">}</span>
     <span class="n">∇L</span>   <span class="o">::</span> <span class="kt">Matrix</span><span class="p">{</span><span class="n">T</span><span class="p">}</span>
     <span class="c"># TODO: add whatever intermediate arrays you may want to pre-allocate</span>
+    <span class="n">storage_q</span>  <span class="o">::</span> <span class="kt">Vector</span><span class="p">{</span><span class="n">T</span><span class="p">}</span>
     <span class="n">xty</span>  <span class="o">::</span> <span class="kt">Vector</span><span class="p">{</span><span class="n">T</span><span class="p">}</span>
     <span class="n">ztr2</span> <span class="o">::</span> <span class="kt">Vector</span><span class="p">{</span><span class="n">T</span><span class="p">}</span>
     <span class="n">xtx</span>  <span class="o">::</span> <span class="kt">Matrix</span><span class="p">{</span><span class="n">T</span><span class="p">}</span>
@@ -13552,11 +13826,12 @@ where $\mathbf{r}_i = \mathbf{y}_i - \mathbf{X}_i \boldsymbol{\beta}$.</p>
     <span class="n">∇σ²</span>  <span class="o">=</span> <span class="n">similar</span><span class="p">(</span><span class="n">σ²</span><span class="p">)</span>
     <span class="n">∇L</span>   <span class="o">=</span> <span class="n">similar</span><span class="p">(</span><span class="n">L</span><span class="p">)</span>
     <span class="c"># intermediate arrays</span>
+    <span class="n">storage_q</span> <span class="o">=</span> <span class="kt">Vector</span><span class="p">{</span><span class="n">T</span><span class="p">}(</span><span class="n">undef</span><span class="p">,</span> <span class="n">q</span><span class="p">)</span>
     <span class="n">xty</span>  <span class="o">=</span> <span class="kt">Vector</span><span class="p">{</span><span class="n">T</span><span class="p">}(</span><span class="n">undef</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
     <span class="n">ztr2</span> <span class="o">=</span> <span class="kt">Vector</span><span class="p">{</span><span class="n">T</span><span class="p">}(</span><span class="n">undef</span><span class="p">,</span> <span class="n">abs2</span><span class="p">(</span><span class="n">q</span><span class="p">))</span>
     <span class="n">xtx</span>  <span class="o">=</span> <span class="kt">Matrix</span><span class="p">{</span><span class="n">T</span><span class="p">}(</span><span class="n">undef</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
     <span class="n">ztz2</span> <span class="o">=</span> <span class="kt">Matrix</span><span class="p">{</span><span class="n">T</span><span class="p">}(</span><span class="n">undef</span><span class="p">,</span> <span class="n">abs2</span><span class="p">(</span><span class="n">q</span><span class="p">),</span> <span class="n">abs2</span><span class="p">(</span><span class="n">q</span><span class="p">))</span>
-    <span class="n">LmmModel</span><span class="p">(</span><span class="n">obsvec</span><span class="p">,</span> <span class="n">β</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">σ²</span><span class="p">,</span> <span class="n">∇β</span><span class="p">,</span> <span class="n">∇σ²</span><span class="p">,</span> <span class="n">∇L</span><span class="p">,</span> <span class="n">xty</span><span class="p">,</span> <span class="n">ztr2</span><span class="p">,</span> <span class="n">xtx</span><span class="p">,</span> <span class="n">ztz2</span><span class="p">)</span>
+    <span class="n">LmmModel</span><span class="p">(</span><span class="n">obsvec</span><span class="p">,</span> <span class="n">β</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">σ²</span><span class="p">,</span> <span class="n">∇β</span><span class="p">,</span> <span class="n">∇σ²</span><span class="p">,</span> <span class="n">∇L</span><span class="p">,</span><span class="n">storage_q</span><span class="p">,</span> <span class="n">xty</span><span class="p">,</span> <span class="n">ztr2</span><span class="p">,</span> <span class="n">xtx</span><span class="p">,</span> <span class="n">ztz2</span><span class="p">)</span>
 <span class="k">end</span>
 
 <span class="s">&quot;&quot;&quot;</span>
@@ -13566,6 +13841,7 @@ where $\mathbf{r}_i = \mathbf{y}_i - \mathbf{X}_i \boldsymbol{\beta}$.</p>
 <span class="s">and `m.σ²`. If `needgrad==true`, then `m.∇β`, `m.∇Σ`, and `m.σ² are filled </span>
 <span class="s">with the corresponding gradient.</span>
 <span class="s">&quot;&quot;&quot;</span>
+
 <span class="k">function</span> <span class="n">logl!</span><span class="p">(</span><span class="n">m</span><span class="o">::</span><span class="n">LmmModel</span><span class="p">{</span><span class="n">T</span><span class="p">},</span> <span class="n">needgrad</span><span class="o">::</span><span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">)</span> <span class="n">where</span> <span class="n">T</span> <span class="o">&lt;:</span> <span class="kt">AbstractFloat</span>
     <span class="n">logl</span> <span class="o">=</span> <span class="n">zero</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">needgrad</span>
@@ -13582,11 +13858,33 @@ where $\mathbf{r}_i = \mathbf{y}_i - \mathbf{X}_i \boldsymbol{\beta}$.</p>
             <span class="n">m</span><span class="o">.</span><span class="n">∇σ²</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">obs</span><span class="o">.</span><span class="n">∇σ²</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="k">end</span>
     <span class="k">end</span>
+    
+    <span class="n">BLAS</span><span class="o">.</span><span class="n">trmm!</span><span class="p">(</span><span class="sc">&#39;R&#39;</span><span class="p">,</span> <span class="sc">&#39;L&#39;</span><span class="p">,</span> <span class="sc">&#39;N&#39;</span><span class="p">,</span> <span class="sc">&#39;N&#39;</span><span class="p">,</span> <span class="n">T</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">m</span><span class="o">.</span><span class="n">L</span><span class="p">,</span> <span class="n">m</span><span class="o">.</span><span class="n">∇L</span><span class="p">)</span>
     <span class="n">logl</span>
 <span class="k">end</span>
 </pre></div>
 
     </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[7]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>logl! (generic function with 4 methods)</pre>
+</div>
+
+</div>
+
 </div>
 </div>
 
@@ -13601,14 +13899,14 @@ where $\mathbf{r}_i = \mathbf{y}_i - \mathbf{X}_i \boldsymbol{\beta}$.</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">Random</span><span class="o">.</span><span class="n">seed!</span><span class="p">(</span><span class="mi">257</span><span class="p">)</span>
 
 <span class="c"># dimension</span>
 <span class="n">m</span>      <span class="o">=</span> <span class="mi">1000</span> <span class="c"># number of individuals</span>
-<span class="n">ns</span>     <span class="o">=</span> <span class="n">rand</span><span class="p">(</span><span class="mi">1500</span><span class="o">:</span><span class="mi">2000</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span> <span class="c"># numbers of observations per individual</span>
+<span class="n">ns</span>     <span class="o">=</span> <span class="n">rand</span><span class="p">(</span><span class="mi">1500</span><span class="o">:</span><span class="mi">2000</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span> <span class="c"># random numbers of observations per individual</span>
 <span class="n">p</span>      <span class="o">=</span> <span class="mi">5</span> <span class="c"># number of fixed effects, including intercept</span>
 <span class="n">q</span>      <span class="o">=</span> <span class="mi">3</span> <span class="c"># number of random effects, including intercept</span>
 <span class="n">obsvec</span> <span class="o">=</span> <span class="kt">Vector</span><span class="p">{</span><span class="n">LmmObs</span><span class="p">{</span><span class="kt">Float64</span><span class="p">}}(</span><span class="n">undef</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span>
@@ -13652,7 +13950,7 @@ where $\mathbf{r}_i = \mathbf{y}_i - \mathbf{X}_i \boldsymbol{\beta}$.</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="p">(</span><span class="n">isfile</span><span class="p">(</span><span class="s">&quot;lmm_data.txt&quot;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">filesize</span><span class="p">(</span><span class="s">&quot;lmm_data.txt&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">246638945</span><span class="p">)</span> <span class="o">||</span> 
@@ -13704,7 +14002,7 @@ where $\mathbf{r}_i = \mathbf{y}_i - \mathbf{X}_i \boldsymbol{\beta}$.</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">copy!</span><span class="p">(</span><span class="n">lmm</span><span class="o">.</span><span class="n">β</span><span class="p">,</span> <span class="n">βtrue</span><span class="p">)</span>
@@ -13720,6 +14018,27 @@ where $\mathbf{r}_i = \mathbf{y}_i - \mathbf{X}_i \boldsymbol{\beta}$.</p>
 </div>
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>obj = logl!(lmm, true) = -2.8547126486833007e6
+lmm.∇β = [-8.693744360628205, 169.38364540291383, 1412.9462826018234, 583.9807190830812, 57.76586042021419]
+lmm.∇σ² = [-371.828864263988]
+lmm.∇L = [20.19709774964297 -4.56671969506622 9.073934365212699; -5.895609775262917 -13.45609335374055 -18.889943728345727; 12.832481043367153 -20.692896580036617 -61.98953657918674]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
@@ -13731,7 +14050,7 @@ where $\mathbf{r}_i = \mathbf{y}_i - \mathbf{X}_i \boldsymbol{\beta}$.</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="nd">@assert</span> <span class="n">abs</span><span class="p">(</span><span class="n">obj</span> <span class="o">-</span> <span class="p">(</span><span class="o">-</span><span class="mf">2.854712648683302e6</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mf">1e-6</span>
@@ -13758,13 +14077,43 @@ where $\mathbf{r}_i = \mathbf{y}_i - \mathbf{X}_i \boldsymbol{\beta}$.</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[61]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">bm_model</span> <span class="o">=</span> <span class="nd">@benchmark</span> <span class="n">logl!</span><span class="p">(</span><span class="o">$</span><span class="n">lmm</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span>
 </pre></div>
 
     </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[61]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>BenchmarkTools.Trial: 
+  memory estimate:  0 bytes
+  allocs estimate:  0
+  --------------
+  minimum time:     2.502 ms (0.00% GC)
+  median time:      2.980 ms (0.00% GC)
+  mean time:        3.053 ms (0.00% GC)
+  maximum time:     6.214 ms (0.00% GC)
+  --------------
+  samples:          1633
+  evals/sample:     1</pre>
+</div>
+
+</div>
+
 </div>
 </div>
 
@@ -13779,13 +14128,33 @@ where $\mathbf{r}_i = \mathbf{y}_i - \mathbf{X}_i \boldsymbol{\beta}$.</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">clamp</span><span class="p">(</span><span class="mi">10</span> <span class="o">/</span> <span class="p">(</span><span class="n">median</span><span class="p">(</span><span class="n">bm_model</span><span class="p">)</span><span class="o">.</span><span class="n">time</span> <span class="o">/</span> <span class="mf">1e6</span><span class="p">)</span> <span class="o">*</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
 </pre></div>
 
     </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[16]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>10.0</pre>
+</div>
+
+</div>
+
 </div>
 </div>
 
@@ -13800,13 +14169,33 @@ where $\mathbf{r}_i = \mathbf{y}_i - \mathbf{X}_i \boldsymbol{\beta}$.</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">clamp</span><span class="p">(</span><span class="mi">10</span> <span class="o">-</span> <span class="n">median</span><span class="p">(</span><span class="n">bm_model</span><span class="p">)</span><span class="o">.</span><span class="n">memory</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
 </pre></div>
 
     </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[17]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>10.0</pre>
+</div>
+
+</div>
+
 </div>
 </div>
 
@@ -13817,13 +14206,48 @@ where $\mathbf{r}_i = \mathbf{y}_i - \mathbf{X}_i \boldsymbol{\beta}$.</p>
 <h2 id="Q5.-(30-pts)-Starting-point">Q5. (30 pts) Starting point<a class="anchor-link" href="#Q5.-(30-pts)-Starting-point">&#182;</a></h2><p>For numerical optimization, a good starting point is critical. Let's start $\boldsymbol{\beta}$ and $\sigma^2$ from the least sqaures solutions (ignoring intra-individual correlations)
 \begin{eqnarray*}
 \boldsymbol{\beta}^{(0)} &amp;=&amp; \left(\sum_i \mathbf{X}_i^T \mathbf{X}_i\right)^{-1} \left(\sum_i \mathbf{X}_i^T \mathbf{y}_i\right) \\
-\sigma_0^{2(0)} &amp;=&amp; \frac{\sum_i \|\mathbf{r}_i^{(0)}\|_2^2}{\sum_i n_i} = \frac{\sum_i \|\mathbf{y}_i - \mathbf{X}_i \boldsymbol{\beta}^{(0)}\|_2^2}{\sum_i n_i}.
+\sigma^{2(0)} &amp;=&amp; \frac{\sum_i \|\mathbf{r}_i^{(0)}\|_2^2}{\sum_i n_i} = \frac{\sum_i \|\mathbf{y}_i - \mathbf{X}_i \boldsymbol{\beta}^{(0)}\|_2^2}{\sum_i n_i}.
 \end{eqnarray*}
 To get a reasonable starting point for $\boldsymbol{\Sigma} = \mathbf{L} \mathbf{L}^T$, we can minimize the least squares criterion (ignoring the noise variance component)
 $$
     \text{minimize} \sum_i \| \mathbf{r}_i^{(0)} \mathbf{r}_i^{(0)T} - \mathbf{Z}_i \boldsymbol{\Sigma} \mathbf{Z}_i^T \|_{\text{F}}^2.
 $$
 Derive the minimizer $\boldsymbol{\Sigma}^{(0)}$ (10 pts).</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Solution:</strong> Here $\mathbf{r}$ is actually $\mathbf{r}_i^{(0)}$</p>
+\begin{equation}
+\begin{split}
+f_i(\Sigma) &amp;= \| \mathbf{r}_i^{(0)} \mathbf{r}_i^{(0)T} - \mathbf{Z}_i \boldsymbol{\Sigma} \mathbf{Z}_i^T \|_{\text{F}}^2\\
+&amp;= tr\left[(\mathbf{r}_i^{(0)} \mathbf{r}_i^{(0)T} - \mathbf{Z}_i \boldsymbol{\Sigma} \mathbf{Z}_i^T )\times (\mathbf{r}_i^{(0)} \mathbf{r}_i^{(0)T} - \mathbf{Z}_i \boldsymbol{\Sigma} \mathbf{Z}_i^T )\right]\\
+&amp;= tr(\mathbf{r}_i^{(0)} \mathbf{r}_i^{(0)T}\mathbf{r}_i^{(0)} \mathbf{r}_i^{(0)T})- 2tr(\mathbf{Z}_i \boldsymbol{\Sigma} \mathbf{Z}_i^T\mathbf{r}_i^{(0)} \mathbf{r}_i^{(0)T}) + tr(\mathbf{Z}_i \boldsymbol{\Sigma} \mathbf{Z}_i^T\mathbf{Z}_i \boldsymbol{\Sigma} \mathbf{Z}_i^T)
+\end{split}
+\end{equation}$$
+Df = -2\left(\mathbf{Z}_i^T\mathbf{r}_i^{(0)} \mathbf{r}_i^{(0)T}\mathbf{Z}_i \right) +
+2(\mathbf{Z}_i^T\mathbf{Z}_i)\boldsymbol{\Sigma} (\mathbf{Z}_i^T\mathbf{Z}_i)
+$$<p>To get the minimizer $\Sigma$
+$$
+\sum_iDf = 0
+$$</p>
+$$
+=&gt;\sum_i\mathbf{Z}_i^T\mathbf{r}_i^{(0)} \mathbf{r}_i^{(0)T}\mathbf{Z}_i  =
+\sum_i(\mathbf{Z}_i^T\mathbf{Z}_i)\boldsymbol{\Sigma} (\mathbf{Z}_i^T\mathbf{Z}_i)
+$$<p>From the identity $\mathrm{vec}\mathbf{ABC} = (\mathbf{C}' \otimes \mathbf{A})\mathrm{vec}\mathbf{B}$: 
+$$=&gt; \sum_i\left(\mathbf{Z}_i^T\mathbf{Z}_i \otimes \mathbf{Z}_i^T\mathbf{Z}_i\right)\mathrm{vec}\mathbf{\Sigma} =  \sum_i\left(\mathbf{Z}_i^T\mathbf{r}_i^{(0)} \otimes \mathbf{Z}_i^T\mathbf{r}_i^{(0)}\right) $$
+We can calculate $\Sigma$ as:
+$$=&gt; \mathrm{vec}\mathbf{\Sigma}^{(0)} = \left(\sum_i(\mathbf{Z}_i^T\mathbf{Z}_i \otimes \mathbf{Z}_i^T\mathbf{Z}_i)\right)^{-1} \sum_i\left(\mathbf{Z}_i^T\mathbf{r}_i^{(0)} \otimes \mathbf{Z}_i^T\mathbf{r}_i^{(0)}\right) $$</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <p>We implement this start point strategy in the function <code>init_ls()</code>.</p>
 
 </div>
@@ -13831,7 +14255,7 @@ Derive the minimizer $\boldsymbol{\Sigma}^{(0)}$ (10 pts).</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[151]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="s">&quot;&quot;&quot;</span>
@@ -13840,11 +14264,52 @@ Derive the minimizer $\boldsymbol{\Sigma}^{(0)}$ (10 pts).</p>
 <span class="s">Initialize parameters of a `LmmModel` object from the least squares estimate. </span>
 <span class="s">`m.β`, `m.L`, and `m.σ²` are overwritten with the least squares estimates.</span>
 <span class="s">&quot;&quot;&quot;</span>
+
 <span class="k">function</span> <span class="n">init_ls!</span><span class="p">(</span><span class="n">m</span><span class="o">::</span><span class="n">LmmModel</span><span class="p">{</span><span class="n">T</span><span class="p">})</span> <span class="n">where</span> <span class="n">T</span> <span class="o">&lt;:</span> <span class="kt">AbstractFloat</span>
     <span class="n">p</span><span class="p">,</span> <span class="n">q</span> <span class="o">=</span> <span class="n">size</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">size</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
     <span class="c"># TODO: fill m.β, m.L, m.σ² by LS estimates</span>
-    <span class="n">sleep</span><span class="p">(</span><span class="mf">1e-3</span><span class="p">)</span> <span class="c"># pretend this takes 1ms</span>
-    <span class="n">m</span>
+    <span class="c"># pp matrix defined as xtx already</span>
+    <span class="c">#storage_pp = Array{T}(undef, p, p)</span>
+    
+    <span class="nd">@inbounds</span> <span class="k">for</span> <span class="n">i</span> <span class="kp">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">length</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">obs</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        
+        <span class="c">## m.β</span>
+        <span class="n">BLAS</span><span class="o">.</span><span class="n">axpy!</span><span class="p">(</span><span class="n">T</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">obs</span><span class="o">.</span><span class="n">xtx</span><span class="p">,</span> <span class="n">m</span><span class="o">.</span><span class="n">xtx</span><span class="p">)</span>
+        <span class="n">BLAS</span><span class="o">.</span><span class="n">axpy!</span><span class="p">(</span><span class="n">T</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">obs</span><span class="o">.</span><span class="n">xty</span><span class="p">,</span> <span class="n">m</span><span class="o">.</span><span class="n">β</span><span class="p">)</span>
+    <span class="k">end</span>
+    <span class="c">## m.β</span>
+    <span class="c"># solve twice for triangular matrix</span>
+    <span class="n">LAPACK</span><span class="o">.</span><span class="n">potrf!</span><span class="p">(</span><span class="sc">&#39;U&#39;</span><span class="p">,</span> <span class="n">m</span><span class="o">.</span><span class="n">xtx</span><span class="p">)</span> 
+    <span class="n">BLAS</span><span class="o">.</span><span class="n">trsv!</span><span class="p">(</span><span class="sc">&#39;U&#39;</span><span class="p">,</span> <span class="sc">&#39;T&#39;</span><span class="p">,</span> <span class="sc">&#39;N&#39;</span><span class="p">,</span> <span class="n">m</span><span class="o">.</span><span class="n">xtx</span><span class="p">,</span> <span class="n">m</span><span class="o">.</span><span class="n">β</span><span class="p">)</span> 
+    <span class="n">BLAS</span><span class="o">.</span><span class="n">trsv!</span><span class="p">(</span><span class="sc">&#39;U&#39;</span><span class="p">,</span> <span class="sc">&#39;N&#39;</span><span class="p">,</span> <span class="sc">&#39;N&#39;</span><span class="p">,</span> <span class="n">m</span><span class="o">.</span><span class="n">xtx</span><span class="p">,</span>  <span class="n">m</span><span class="o">.</span><span class="n">β</span><span class="p">)</span> 
+    
+    <span class="nd">@inbounds</span> <span class="k">for</span> <span class="n">i</span> <span class="kp">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">length</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">obs</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="c">## m.σ²</span>
+        <span class="n">copy!</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">xty</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">xty</span><span class="p">)</span>
+        <span class="n">rtr</span>  <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">yty</span> <span class="o">+</span>
+            <span class="n">dot</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">β</span><span class="p">,</span> <span class="n">BLAS</span><span class="o">.</span><span class="n">gemv!</span><span class="p">(</span><span class="sc">&#39;N&#39;</span><span class="p">,</span> <span class="n">T</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">obs</span><span class="o">.</span><span class="n">xtx</span><span class="p">,</span> <span class="n">m</span><span class="o">.</span><span class="n">β</span><span class="p">,</span> <span class="n">T</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">),</span> <span class="n">m</span><span class="o">.</span><span class="n">xty</span><span class="p">))</span>
+<span class="c">#         BLAS.axpy!(T(1), rtr, m.σ²)</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">σ²</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">rtr</span>
+        
+        <span class="c">## m.L</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">ztz2</span> <span class="o">.+=</span> <span class="n">kron</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">ztz</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">ztz</span><span class="p">)</span>
+        <span class="c"># cal ztr</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">storage_q</span> <span class="o">.=</span> <span class="n">copy</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">zty</span><span class="p">)</span>
+<span class="c">#         copy!(m.storage_q, obs.zty)</span>
+<span class="c">#         BLAS.gemv!(&#39;N&#39;, T(-1), obs.ztx, m.β, T(1), storage_q)</span>
+        <span class="n">BLAS</span><span class="o">.</span><span class="n">gemv!</span><span class="p">(</span><span class="sc">&#39;N&#39;</span><span class="p">,</span> <span class="n">T</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">obs</span><span class="o">.</span><span class="n">ztx</span><span class="p">,</span> <span class="n">m</span><span class="o">.</span><span class="n">β</span><span class="p">,</span> <span class="n">T</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">m</span><span class="o">.</span><span class="n">storage_q</span><span class="p">)</span>  
+        <span class="n">m</span><span class="o">.</span><span class="n">ztr2</span> <span class="o">.+=</span> <span class="n">kron</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">storage_q</span><span class="p">,</span> <span class="n">m</span><span class="o">.</span><span class="n">storage_q</span><span class="p">)</span>
+    <span class="k">end</span>
+    <span class="c"># m.σ²</span>
+    <span class="n">rdiv!</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">σ²</span><span class="p">,</span> <span class="n">length</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="o">*</span><span class="n">size</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    
+    <span class="c"># m.L</span>
+    <span class="n">m</span><span class="o">.</span><span class="n">L</span> <span class="o">.=</span> <span class="n">reshape</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">ztz2</span> <span class="o">\</span> <span class="n">vec</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">ztr2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+    <span class="n">LAPACK</span><span class="o">.</span><span class="n">potrf!</span><span class="p">(</span><span class="sc">&#39;U&#39;</span><span class="p">,</span> <span class="n">m</span><span class="o">.</span><span class="n">L</span><span class="p">)</span>
+    <span class="n">m</span><span class="o">.</span><span class="n">L</span> <span class="o">.=</span> <span class="kt">Diagonal</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">L</span><span class="p">)</span>
+
 <span class="k">end</span>
 </pre></div>
 
@@ -13852,10 +14317,30 @@ Derive the minimizer $\boldsymbol{\Sigma}^{(0)}$ (10 pts).</p>
 </div>
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[151]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>init_ls! (generic function with 1 method)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[176]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">init_ls!</span><span class="p">(</span><span class="n">lmm</span><span class="p">)</span>
@@ -13866,6 +14351,27 @@ Derive the minimizer $\boldsymbol{\Sigma}^{(0)}$ (10 pts).</p>
 </pre></div>
 
     </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>logl!(lmm) = -3.294777879556836e6
+lmm.β = [0.08751262017663723, 6.493840910583942, -3.494416413794949, 0.9964292193962381, 4.997220876939121]
+lmm.σ² = [4.987417133752081]
+lmm.L = [1.4307856656296862 0.0 0.0; 0.0 1.0895126922106333 0.0; 0.0 0.0 0.9605046173426126]
+</pre>
+</div>
+</div>
+
 </div>
 </div>
 
@@ -13880,7 +14386,7 @@ Derive the minimizer $\boldsymbol{\Sigma}^{(0)}$ (10 pts).</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[177]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># this is the points you get</span>
@@ -13888,6 +14394,26 @@ Derive the minimizer $\boldsymbol{\Sigma}^{(0)}$ (10 pts).</p>
 </pre></div>
 
     </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[177]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>10</pre>
+</div>
+
+</div>
+
 </div>
 </div>
 
@@ -13902,7 +14428,7 @@ Derive the minimizer $\boldsymbol{\Sigma}^{(0)}$ (10 pts).</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[19]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">bm_init</span> <span class="o">=</span> <span class="nd">@benchmark</span> <span class="n">init_ls!</span><span class="p">(</span><span class="o">$</span><span class="n">lmm</span><span class="p">)</span>
@@ -13912,10 +14438,40 @@ Derive the minimizer $\boldsymbol{\Sigma}^{(0)}$ (10 pts).</p>
 </div>
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[19]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>BenchmarkTools.Trial: 
+  memory estimate:  1.22 MiB
+  allocs estimate:  9006
+  --------------
+  minimum time:     600.501 μs (0.00% GC)
+  median time:      747.350 μs (0.00% GC)
+  mean time:        995.079 μs (12.09% GC)
+  maximum time:     16.338 ms (89.75% GC)
+  --------------
+  samples:          5012
+  evals/sample:     1</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[20]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># this is the points you get</span>
@@ -13923,6 +14479,26 @@ Derive the minimizer $\boldsymbol{\Sigma}^{(0)}$ (10 pts).</p>
 </pre></div>
 
     </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[20]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>10.0</pre>
+</div>
+
+</div>
+
 </div>
 </div>
 
@@ -13937,7 +14513,7 @@ Derive the minimizer $\boldsymbol{\Sigma}^{(0)}$ (10 pts).</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[108]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="s">&quot;&quot;&quot;</span>
@@ -13966,6 +14542,7 @@ Derive the minimizer $\boldsymbol{\Sigma}^{(0)}$ (10 pts).</p>
     <span class="c"># σ² should be &gt;= 0</span>
     <span class="n">lb</span><span class="p">[</span><span class="k">end</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">MathProgBase</span><span class="o">.</span><span class="n">loadproblem!</span><span class="p">(</span><span class="n">optm</span><span class="p">,</span> <span class="n">npar</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">lb</span><span class="p">,</span> <span class="n">ub</span><span class="p">,</span> <span class="kt">Float64</span><span class="p">[],</span> <span class="kt">Float64</span><span class="p">[],</span> <span class="o">:</span><span class="n">Max</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span>
+    
     <span class="c"># starting point</span>
     <span class="n">par0</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">npar</span><span class="p">)</span>
     <span class="n">modelpar_to_optimpar!</span><span class="p">(</span><span class="n">par0</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span>
@@ -14093,14 +14670,14 @@ Derive the minimizer $\boldsymbol{\Sigma}^{(0)}$ (10 pts).</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[186]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># initialize from least squares</span>
 <span class="n">init_ls!</span><span class="p">(</span><span class="n">lmm</span><span class="p">)</span>
 <span class="n">println</span><span class="p">(</span><span class="s">&quot;objective value at starting point: &quot;</span><span class="p">,</span> <span class="n">logl!</span><span class="p">(</span><span class="n">lmm</span><span class="p">));</span> <span class="n">println</span><span class="p">()</span>
 
-<span class="nd">@time</span> <span class="n">fit!</span><span class="p">(</span><span class="n">lmm</span><span class="p">,</span> <span class="n">NLopt</span><span class="o">.</span><span class="n">NLoptSolver</span><span class="p">(</span><span class="n">algorithm</span><span class="o">=:</span><span class="n">LD_MMA</span><span class="p">,</span> 
+<span class="nd">@time</span> <span class="n">fit!</span><span class="p">(</span><span class="n">lmm</span><span class="p">,</span> <span class="n">NLopt</span><span class="o">.</span><span class="n">NLoptSolver</span><span class="p">(</span><span class="n">algorithm</span><span class="o">=:</span><span class="n">LD_LBFGS</span><span class="p">,</span> 
         <span class="n">ftol_rel</span> <span class="o">=</span> <span class="mf">1e-12</span><span class="p">,</span> <span class="n">ftol_abs</span> <span class="o">=</span> <span class="mf">1e-12</span><span class="p">,</span> 
         <span class="n">xtol_rel</span> <span class="o">=</span> <span class="mf">1e-12</span><span class="p">,</span> <span class="n">xtol_abs</span> <span class="o">=</span> <span class="mf">1e-12</span><span class="p">,</span> 
         <span class="n">maxeval</span><span class="o">=</span><span class="mi">10000</span><span class="p">));</span>
@@ -14122,6 +14699,50 @@ Derive the minimizer $\boldsymbol{\Sigma}^{(0)}$ (10 pts).</p>
 </div>
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>objective value at starting point: -3.2947776646458637e6
+
+  0.245709 seconds (268 allocations: 12.344 KiB)
+objective value at solution: -2.854709785227569e6
+
+solution values:
+lmm.β = [0.08246949630724451, 6.500144679579916, -3.4987913608489363, 1.0004998199071227, 5.000049671242345]
+lmm.σ² = [1.4990425839528942]
+lmm.L * transpose(lmm.L) = [2.0569820840246433 -0.010184405008481135 0.018440039035304202; -0.010184405008481135 1.182203600756062 -0.022661551771602416; 0.018440039035304202 -0.022661551771602416 0.9378997723453416]
+gradient @ solution:
+lmm.∇β = [-0.07029921782006321, -0.0062164600337624165, 0.11122068953931219, -0.32297784119317896, -0.17191481400179853]
+lmm.∇σ² = [0.034604776490404277]
+lmm.∇L = [-0.054011351459774176 0.13413306589511717 0.018322874304463586; 0.23261918117116503 0.07188820782679887 -0.03512770071854324; 0.0410419908863201 -0.044524066054728445 0.0048336826117585845]
+sqrt(abs2(norm(lmm.∇β)) + abs2(norm(lmm.∇σ²) + abs2(norm(LowerTriangular(lmm.∇L))))) = 0.401644939853731
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[186]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0.401644939853731</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
@@ -14133,7 +14754,7 @@ Derive the minimizer $\boldsymbol{\Sigma}^{(0)}$ (10 pts).</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[150]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># objective at solution should be close enough to the optimal</span>
@@ -14144,6 +14765,27 @@ Derive the minimizer $\boldsymbol{\Sigma}^{(0)}$ (10 pts).</p>
 </pre></div>
 
     </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_text output_error">
+<pre>
+AssertionError: sqrt(abs2(norm(lmm.∇β)) + abs2(norm(lmm.∇σ²) + abs2(norm(LowerTriangular(lmm.∇L))))) &lt; 0.0007
+
+Stacktrace:
+ [1] top-level scope at In[150]:3</pre>
+</div>
+</div>
+
 </div>
 </div>
 
@@ -14158,7 +14800,7 @@ Derive the minimizer $\boldsymbol{\Sigma}^{(0)}$ (10 pts).</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[187]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">bm_bfgs</span> <span class="o">=</span> <span class="nd">@benchmark</span> <span class="n">fit!</span><span class="p">(</span><span class="o">$</span><span class="n">lmm</span><span class="p">,</span> <span class="o">$</span><span class="p">(</span><span class="n">NLopt</span><span class="o">.</span><span class="n">NLoptSolver</span><span class="p">(</span><span class="n">algorithm</span><span class="o">=:</span><span class="n">LD_LBFGS</span><span class="p">,</span> 
@@ -14171,10 +14813,40 @@ Derive the minimizer $\boldsymbol{\Sigma}^{(0)}$ (10 pts).</p>
 </div>
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[187]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>BenchmarkTools.Trial: 
+  memory estimate:  9.80 KiB
+  allocs estimate:  207
+  --------------
+  minimum time:     171.274 ms (0.00% GC)
+  median time:      234.058 ms (0.00% GC)
+  mean time:        228.336 ms (0.00% GC)
+  maximum time:     266.827 ms (0.00% GC)
+  --------------
+  samples:          22
+  evals/sample:     1</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[188]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="c"># this is the points you get</span>
@@ -14182,6 +14854,26 @@ Derive the minimizer $\boldsymbol{\Sigma}^{(0)}$ (10 pts).</p>
 </pre></div>
 
     </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[188]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>10.0</pre>
+</div>
+
+</div>
+
 </div>
 </div>
 
